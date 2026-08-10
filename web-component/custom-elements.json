@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0.0",
+  "readme": "../README.md",
+  "modules": [
+    {
+      "kind": "javascript-module",
+      "path": "lib/jb-range-input.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "JBRangeInputWebComponent",
+          "customElement": true,
+          "tagName": "jb-range-input"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "JBRangeInputWebComponent",
+          "declaration": {
+            "name": "JBRangeInputWebComponent",
+            "module": "lib/jb-range-input.ts"
+          }
+        }
+      ]
+    }
+  ]
+}

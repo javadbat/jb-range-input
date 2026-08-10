@@ -1,0 +1,38 @@
+{
+  "name": "jb-range-input",
+  "version": "0.1.0",
+  "description": "Range input web component",
+  "type": "module",
+  "author": {
+    "name": "mohammad javad bathaei",
+    "email": "javadbat@gmail.com"
+  },
+  "license": "MIT",
+  "files": [
+    "LICENSE",
+    "README.md",
+    "web-component/custom-elements.json",
+    "web-component/lib/",
+    "web-component/dist/",
+    "react/",
+    "react/dist"
+  ],
+  "main": "index.js",
+  "types": "./web-component/dist/jb-range-input.d.ts",
+  "exports": {
+    ".": {
+      "types": "./web-component/dist/jb-range-input.d.ts",
+      "default": "./index.js"
+    },
+    "./react": {
+      "types": "./react/dist/JBRangeInput.d.ts",
+      "default": "./react/index.js"
+    },
+    "./*": "./*"
+  },
+  "customElements": "web-component/custom-elements.json",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:javadbat/jb-range-input.git"
+  }
+}
