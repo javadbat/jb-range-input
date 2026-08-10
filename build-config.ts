@@ -6,8 +6,10 @@ export const webComponentList: WebComponentBuildConfig[] = [
     path: "./web-component/lib/jb-range-input.ts",
     outputPath: "./web-component/dist/jb-range-input.js",
     tsConfigPath: "./web-component/tsconfig.json",
-    external: [],
-    globals: {},
+    external: ["jb-core"],
+    globals: {
+      "jb-core": "JBCore",
+    },
     umdName: "JBRangeInput",
   },
 ];

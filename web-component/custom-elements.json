@@ -10,7 +10,43 @@
           "kind": "class",
           "name": "JBRangeInputWebComponent",
           "customElement": true,
-          "tagName": "jb-range-input"
+          "tagName": "jb-range-input",
+          "members": [
+            {
+              "kind": "field",
+              "name": "min",
+              "type": { "text": "number" },
+              "attribute": "min",
+              "default": "0"
+            },
+            {
+              "kind": "field",
+              "name": "max",
+              "type": { "text": "number" },
+              "attribute": "max",
+              "default": "10"
+            },
+            {
+              "kind": "field",
+              "name": "step",
+              "type": { "text": "number" },
+              "attribute": "step",
+              "default": "1"
+            },
+            {
+              "kind": "field",
+              "name": "pointStep",
+              "type": { "text": "number" },
+              "attribute": "point-step",
+              "default": "1"
+            }
+          ],
+          "attributes": [
+            { "name": "min", "type": { "text": "number" }, "default": "0" },
+            { "name": "max", "type": { "text": "number" }, "default": "10" },
+            { "name": "step", "type": { "text": "number" }, "default": "1" },
+            { "name": "point-step", "type": { "text": "number" }, "default": "1" }
+          ]
         }
       ],
       "exports": [

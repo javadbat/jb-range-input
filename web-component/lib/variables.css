@@ -1,0 +1,24 @@
+:host {
+  /* Size */
+  --width: var(--jb-range-input-width, 100%);
+  --height: var(--jb-range-input-height, 4rem);
+  --line-width: var(--jb-range-input-line-width, 1);
+  --active-line-width: var(--jb-range-input-active-line-width, calc(var(--line-width) + 2));
+  --dot-width: var(--jb-range-input-dot-width, var(--jb-range-input-dot-size, 2px));
+  --dot-height: var(--jb-range-input-dot-height, 0.75rem);
+  --handle-size: var(--jb-range-input-handle-size, 0.5rem);
+
+  /* Theme/Color */
+  --base-color: var(--jb-range-input-color, var(--jb-primary));
+  --line-color: var(--jb-range-input-line-color, var(--jb-content-secondary));
+  --active-line-color: var(--jb-range-input-active-line-color, var(--base-color));
+  --dot-color: var(--jb-range-input-dot-color, var(--base-color));
+  --handle-color: var(--jb-range-input-handle-color, var(--base-color));
+  --balloon-color: var(--jb-range-input-balloon-color, var(--base-color));
+  --balloon-text-color: var(--jb-range-input-balloon-text-color, var(--jb-content-inverse));
+  --balloon-font-size: var(--jb-range-input-balloon-font-size, 0.75rem);
+
+  /* Other */
+  --line-dash-array: var(--jb-range-input-line-dash-array, 2 8);
+  --active-line-dash-array: var(--jb-range-input-active-line-dash-array, 1 0);
+}

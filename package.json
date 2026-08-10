@@ -34,5 +34,8 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:javadbat/jb-range-input.git"
+  },
+  "dependencies": {
+    "jb-core": "^0.31.0"
   }
 }

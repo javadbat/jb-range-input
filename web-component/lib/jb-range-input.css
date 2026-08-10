@@ -1,11 +1,128 @@
 :host {
-  display: inline-block;
+  display: block;
+  width: var(--width);
 }
 
-.jb-range-input {
+.jb-range-input-web-component {
   box-sizing: border-box;
-  padding: 0.75rem 1rem;
-  border: 1px solid currentColor;
-  border-radius: 0.5rem;
-  font: inherit;
+  position: relative;
+  width: 100%;
+
+  .dot-height-probe,
+  .handle-size-probe {
+    position: absolute;
+    width: 0;
+    height: var(--dot-height);
+    overflow: hidden;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .handle-size-probe {
+    height: var(--handle-size);
+  }
+
+  .range-svg {
+    display: block;
+    width: 100%;
+    height: var(--height);
+    overflow: visible;
+
+    .range-line {
+      stroke: var(--line-color);
+      stroke-width: var(--line-width);
+      vector-effect: non-scaling-stroke;
+      stroke-dasharray: var(--line-dash-array);
+    }
+
+    .range-active-line {
+      stroke: var(--active-line-color);
+      stroke-width: var(--active-line-width);
+      vector-effect: non-scaling-stroke;
+      stroke-dasharray: var(--active-line-dash-array);
+    }
+
+    .range-dots {
+      .range-dot {
+        fill: none;
+        stroke: var(--dot-color);
+        stroke-linecap: round;
+        stroke-width: var(--dot-width);
+        vector-effect: non-scaling-stroke;
+      }
+    }
+
+    .range-handles {
+      .range-handle {
+        fill: var(--handle-color);
+        stroke:none;
+        vector-effect: non-scaling-stroke;
+        cursor: grab;
+        touch-action: none;
+        transition: cx 120ms ease-out;
+
+        &:active {
+          cursor: grabbing;
+        }
+
+        &:focus-visible {
+          outline: 2px solid var(--handle-color);
+          outline-offset: 2px;
+        }
+      }
+    }
+
+    .range-joined-shapes {
+      filter: url("#range-join-filter");
+    }
+
+    .range-balloon {
+      pointer-events: none;
+
+      .range-balloon-content {
+        opacity: 0;
+        transform: scale(0.82);
+        transform-origin: 0 0;
+        transition: opacity 120ms ease-out, transform 120ms ease-out;
+
+        .range-balloon-shape {
+          fill: var(--balloon-color);
+        }
+
+      }
+
+      &.--show {
+        .range-balloon-content {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+    }
+
+    .range-balloon-label {
+      opacity: 0;
+      pointer-events: none;
+      transform-origin: 0 0;
+      transition: opacity 120ms ease-out;
+
+      .range-balloon-value {
+        fill: var(--balloon-text-color);
+        font-family: inherit;
+        font-size: var(--balloon-font-size);
+        font-weight: 600;
+        dominant-baseline: middle;
+        text-anchor: middle;
+      }
+
+      &.--show {
+        opacity: 1;
+      }
+    }
+
+    &.--dragging {
+      .range-handle {
+        transition: none;
+      }
+    }
+  }
 }

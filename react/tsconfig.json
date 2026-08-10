@@ -1,7 +1,16 @@
 {
-  "extends": "../../tsconfig-react.json",
   "compilerOptions": {
-    "outDir": "./dist"
+    "rootDir": "./lib",
+    "declarationDir": "./dist"
   },
-  "include": ["lib/**/*.ts", "lib/**/*.tsx"]
+  "include": [
+    "lib/**/*.ts",
+    "lib/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts",
+    "dist"
+  ],
+  "extends": "jb-core/configs/tsconfig-react.json"
 }

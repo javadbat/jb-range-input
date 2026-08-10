@@ -1,7 +1,15 @@
 {
-  "extends": "../../tsconfig-web-component.json",
   "compilerOptions": {
-    "outDir": "./dist"
+    "rootDir": "./lib",
+    "declarationDir": "./dist"
   },
-  "include": ["lib/**/*.ts"]
+  "include": [
+    "lib/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts",
+    "dist"
+  ],
+  "extends": "jb-core/configs/tsconfig-web-component.json"
 }
