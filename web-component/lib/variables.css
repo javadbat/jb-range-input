@@ -4,21 +4,46 @@
   --height: var(--jb-range-input-height, 4rem);
   --line-width: var(--jb-range-input-line-width, 1);
   --active-line-width: var(--jb-range-input-active-line-width, calc(var(--line-width) + 2));
-  --dot-width: var(--jb-range-input-dot-width, var(--jb-range-input-dot-size, 2px));
-  --dot-height: var(--jb-range-input-dot-height, 0.75rem);
+  --tick-width: var(--jb-range-input-tick-width, var(--jb-range-input-tick-size, 2px));
+  --tick-height: var(--jb-range-input-tick-height, 0.75rem);
+  --minor-tick-width: var(--jb-range-input-minor-tick-width, 1px);
+  --minor-tick-height: var(--jb-range-input-minor-tick-height, calc(var(--tick-height) / 2));
   --handle-size: var(--jb-range-input-handle-size, 0.5rem);
+  --tick-label-font-size: var(--jb-range-input-tick-label-font-size, 0.75rem);
+  --tick-label-line-height: var(--jb-range-input-tick-label-line-height, 1.2);
+  --tick-label-gap: var(--jb-range-input-tick-label-gap, 0.25rem);
+  --message-font-size: var(--jb-range-input-message-font-size, 0.7rem);
+  --message-margin: var(--jb-range-input-message-margin, 0);
+  --message-box-display: var(--jb-range-input-message-box-display, block);
 
   /* Theme/Color */
   --base-color: var(--jb-range-input-color, var(--jb-primary));
   --line-color: var(--jb-range-input-line-color, var(--jb-content-secondary));
   --active-line-color: var(--jb-range-input-active-line-color, var(--base-color));
-  --dot-color: var(--jb-range-input-dot-color, var(--base-color));
+  --tick-color: var(--jb-range-input-tick-color, var(--base-color));
+  --minor-tick-color: var(--jb-range-input-minor-tick-color, var(--tick-color));
+  --tick-label-color: var(--jb-range-input-tick-label-color, var(--jb-content-secondary));
   --handle-color: var(--jb-range-input-handle-color, var(--base-color));
   --balloon-color: var(--jb-range-input-balloon-color, var(--base-color));
   --balloon-text-color: var(--jb-range-input-balloon-text-color, var(--jb-content-inverse));
   --balloon-font-size: var(--jb-range-input-balloon-font-size, 0.75rem);
+  --balloon-hover-offset: var(--jb-range-input-balloon-hover-offset, 0.375rem);
+  --message-color: var(--jb-range-input-message-color, var(--jb-content-secondary));
+  --message-color-error: var(--jb-range-input-message-color-error, var(--jb-red));
 
   /* Other */
   --line-dash-array: var(--jb-range-input-line-dash-array, 2 8);
   --active-line-dash-array: var(--jb-range-input-active-line-dash-array, 1 0);
+}
+
+:host(:state(disabled)) {
+  --base-color: var(--jb-range-input-color-disabled, var(--jb-neutral-9));
+  --line-color: var(--jb-range-input-line-color-disabled, var(--jb-neutral-9));
+  --active-line-color: var(--jb-range-input-active-line-color-disabled, var(--base-color));
+  --tick-color: var(--jb-range-input-tick-color-disabled, var(--base-color));
+  --minor-tick-color: var(--jb-range-input-minor-tick-color-disabled, var(--tick-color));
+  --tick-label-color: var(--jb-range-input-tick-label-color-disabled, var(--jb-content-secondary));
+  --handle-color: var(--jb-range-input-handle-color-disabled, var(--base-color));
+  --balloon-color: var(--jb-range-input-balloon-color-disabled, var(--base-color));
+  --balloon-text-color: var(--jb-range-input-balloon-text-color-disabled, var(--jb-content-secondary));
 }

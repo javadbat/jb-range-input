@@ -1,4 +1,4 @@
-import type { JBRangeInputWebComponent, RangeInputMode } from "jb-range-input";
+import type { JBRangeInputWebComponent, RangeInputMode, RangeInputValue } from "jb-range-input";
 
 declare module "react" {
   namespace JSX {
@@ -6,11 +6,21 @@ declare module "react" {
       "jb-range-input": JBRangeInputType;
     }
     interface JBRangeInputType extends React.DetailedHTMLProps<React.HTMLAttributes<JBRangeInputWebComponent>, JBRangeInputWebComponent> {
-      min?: number,
-      max?: number,
-      step?: number,
-      pointStep?: number,
-      mode?: RangeInputMode,
+      min?: number;
+      max?: number;
+      step?: number;
+      tickStep?: number;
+      minorTickStep?: number | null;
+      showTickLabels?: boolean;
+      tickLabelFormatter?: (value: number) => string;
+      mode?: RangeInputMode;
+      value?: RangeInputValue;
+      initialValue?: RangeInputValue;
+      name?: string;
+      disabled?: boolean;
+      required?: boolean;
+      message?: string;
+      error?: string;
     }
   }
 }

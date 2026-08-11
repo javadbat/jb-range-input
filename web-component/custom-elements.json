@@ -9,55 +9,138 @@
         {
           "kind": "class",
           "name": "JBRangeInputWebComponent",
+          "description": "Form-associated discrete single-value or two-handle range input.",
           "customElement": true,
           "tagName": "jb-range-input",
-          "members": [
-            {
-              "kind": "field",
-              "name": "min",
-              "type": { "text": "number" },
-              "attribute": "min",
-              "default": "0"
-            },
-            {
-              "kind": "field",
-              "name": "max",
-              "type": { "text": "number" },
-              "attribute": "max",
-              "default": "10"
-            },
-            {
-              "kind": "field",
-              "name": "step",
-              "type": { "text": "number" },
-              "attribute": "step",
-              "default": "1"
-            },
-            {
-              "kind": "field",
-              "name": "pointStep",
-              "type": { "text": "number" },
-              "attribute": "point-step",
-              "default": "1"
-            }
-          ],
+          "superclass": { "name": "HTMLElement" },
           "attributes": [
-            { "name": "min", "type": { "text": "number" }, "default": "0" },
-            { "name": "max", "type": { "text": "number" }, "default": "10" },
-            { "name": "step", "type": { "text": "number" }, "default": "1" },
-            { "name": "point-step", "type": { "text": "number" }, "default": "1" }
+            { "name": "value", "type": { "text": "number | string" }, "default": "0", "description": "Selected number, or a comma-separated start/end pair in range mode." },
+            { "name": "mode", "type": { "text": "'single' | 'range'" }, "default": "'single'", "description": "Selects one value or a start/end pair." },
+            { "name": "min", "type": { "text": "number" }, "default": "0", "description": "Minimum selectable value." },
+            { "name": "max", "type": { "text": "number" }, "default": "10", "description": "Maximum selectable value." },
+            { "name": "step", "type": { "text": "number" }, "default": "1", "description": "Selectable and keyboard increment." },
+            { "name": "tick-step", "type": { "text": "number" }, "default": "1", "description": "Interval between visible tick marks." },
+            { "name": "minor-tick-step", "type": { "text": "number" }, "description": "Interval between optional unlabeled minor ticks." },
+            { "name": "show-tick-labels", "type": { "text": "boolean" }, "default": "false", "description": "Displays labels below major ticks." },
+            { "name": "name", "type": { "text": "string" }, "description": "Associated form field name." },
+            { "name": "disabled", "type": { "text": "boolean" }, "default": "false", "description": "Disables pointer and keyboard interaction." },
+            { "name": "required", "type": { "text": "boolean" }, "default": "false", "description": "Requires a value to be provided initially or selected by the user." },
+            { "name": "message", "type": { "text": "string" }, "description": "Helper message displayed below the range." },
+            { "name": "error", "type": { "text": "string" }, "description": "External validation error message." }
+          ],
+          "members": [
+            { "kind": "field", "name": "value", "type": { "text": "number | [number, number]" }, "description": "Current normalized value." },
+            { "kind": "field", "name": "initialValue", "type": { "text": "number | [number, number]" }, "description": "Initial and form-reset value." },
+            { "kind": "field", "name": "mode", "type": { "text": "'single' | 'range'" }, "description": "Current selection mode." },
+            { "kind": "field", "name": "min", "type": { "text": "number" }, "description": "Minimum selectable value." },
+            { "kind": "field", "name": "max", "type": { "text": "number" }, "description": "Maximum selectable value." },
+            { "kind": "field", "name": "step", "type": { "text": "number" }, "description": "Selectable increment." },
+            { "kind": "field", "name": "tickStep", "type": { "text": "number" }, "description": "Visible tick interval." },
+            { "kind": "field", "name": "minorTickStep", "type": { "text": "number | null" }, "description": "Minor-tick interval, or null to hide minor ticks." },
+            { "kind": "field", "name": "showTickLabels", "type": { "text": "boolean" }, "description": "Displays labels below major ticks." },
+            { "kind": "field", "name": "tickLabelFormatter", "type": { "text": "(value: number) => string" }, "description": "Formats major-tick labels." },
+            { "kind": "field", "name": "name", "type": { "text": "string" }, "description": "Associated form field name." },
+            { "kind": "field", "name": "disabled", "type": { "text": "boolean" }, "description": "Whether interaction is disabled." },
+            { "kind": "field", "name": "required", "type": { "text": "boolean" }, "description": "Requires a provided or user-selected value." },
+            { "kind": "field", "name": "message", "type": { "text": "string" }, "description": "Helper message displayed below the range." },
+            { "kind": "field", "name": "form", "type": { "text": "HTMLFormElement | null" }, "readonly": true, "description": "Associated native form." },
+            { "kind": "field", "name": "isDirty", "type": { "text": "boolean" }, "readonly": true, "description": "Whether value differs from initialValue." },
+            {
+              "kind": "field",
+              "name": "validation",
+              "type": { "text": "ValidationHelper<RangeInputValue>" },
+              "readonly": true,
+              "description": "Validation helper from jb-validation."
+            },
+            { "kind": "field", "name": "isAutoValidationDisabled", "type": { "text": "boolean" }, "description": "Disables automatic validation during interaction." },
+            { "kind": "field", "name": "validationMessage", "type": { "text": "string" }, "readonly": true, "description": "Current ElementInternals validation message." }
+          ],
+          "methods": [
+            { "name": "checkValidity", "description": "Runs validation without showing an error and dispatches invalid on failure.", "return": { "type": { "text": "boolean" } } },
+            {
+              "name": "reportValidity",
+              "description": "Runs validation with visible error handling and dispatches invalid on failure.",
+              "return": { "type": { "text": "boolean" } }
+            },
+            { "name": "clearValidationError", "description": "Clears the visible invalid state." }
+          ],
+          "events": [
+            { "name": "input", "description": "Dispatched after a user-selected value is applied." },
+            { "name": "change", "description": "Dispatched after a completed pointer or keyboard interaction." },
+            { "name": "invalid", "description": "Dispatched by validity methods when validation fails." }
+          ],
+          "cssParts": [
+            { "name": "root", "description": "Root component wrapper." },
+            { "name": "range", "description": "Main SVG range surface." },
+            { "name": "range-line", "description": "Inactive track line." },
+            { "name": "range-active-line", "description": "Active track line." },
+            { "name": "range-ticks", "description": "Tick-mark group." },
+            { "name": "range-tick", "description": "Generated tick mark." },
+            { "name": "range-major-tick", "description": "Generated major tick." },
+            { "name": "range-minor-tick", "description": "Generated minor tick." },
+            { "name": "tick-labels", "description": "Major-tick label container." },
+            { "name": "tick-label", "description": "Generated major-tick label." },
+            { "name": "range-joined-shapes", "description": "Filtered handles and balloon group." },
+            { "name": "range-handles", "description": "Slider-handle group." },
+            { "name": "range-handle", "description": "Generated slider handle." },
+            { "name": "range-balloon", "description": "Drag balloon group." },
+            { "name": "range-balloon-content", "description": "Animated balloon content." },
+            { "name": "range-balloon-shape", "description": "Balloon background path." },
+            { "name": "range-balloon-label", "description": "Balloon label group." },
+            { "name": "range-balloon-value", "description": "Current drag-value text." },
+            { "name": "message", "description": "Helper or validation message below the range." }
+          ],
+          "cssStates": [
+            { "name": "disabled", "description": "Applied while interaction is disabled." },
+            { "name": "required", "description": "Applied while required is true." },
+            { "name": "invalid", "description": "Applied while a validation error is visible." }
+          ],
+          "cssProperties": [
+            { "name": "--jb-range-input-width", "description": "Component width." },
+            { "name": "--jb-range-input-height", "description": "Range SVG height." },
+            { "name": "--jb-range-input-color", "description": "Base active color." },
+            { "name": "--jb-range-input-line-color", "description": "Inactive line color." },
+            { "name": "--jb-range-input-line-width", "description": "Inactive line stroke width." },
+            { "name": "--jb-range-input-line-dash-array", "description": "Inactive line dash pattern." },
+            { "name": "--jb-range-input-active-line-color", "description": "Active line color." },
+            { "name": "--jb-range-input-active-line-width", "description": "Active line stroke width." },
+            { "name": "--jb-range-input-active-line-dash-array", "description": "Active line dash pattern." },
+            { "name": "--jb-range-input-tick-color", "description": "Tick color." },
+            { "name": "--jb-range-input-tick-width", "description": "Tick stroke width." },
+            { "name": "--jb-range-input-tick-height", "description": "Tick height." },
+            { "name": "--jb-range-input-minor-tick-color", "description": "Minor-tick color." },
+            { "name": "--jb-range-input-minor-tick-width", "description": "Minor-tick stroke width." },
+            { "name": "--jb-range-input-minor-tick-height", "description": "Minor-tick height." },
+            { "name": "--jb-range-input-tick-label-color", "description": "Major-tick label color." },
+            { "name": "--jb-range-input-tick-label-font-size", "description": "Major-tick label font size." },
+            { "name": "--jb-range-input-tick-label-line-height", "description": "Major-tick label line height." },
+            { "name": "--jb-range-input-tick-label-gap", "description": "Gap between major ticks and labels." },
+            { "name": "--jb-range-input-handle-color", "description": "Handle color." },
+            { "name": "--jb-range-input-handle-size", "description": "Handle radius." },
+            { "name": "--jb-range-input-balloon-color", "description": "Drag balloon color." },
+            { "name": "--jb-range-input-balloon-text-color", "description": "Drag balloon text color." },
+            { "name": "--jb-range-input-balloon-font-size", "description": "Drag balloon text size." },
+            { "name": "--jb-range-input-balloon-hover-offset", "description": "Balloon offset above the handle while hovered." },
+            { "name": "--jb-range-input-message-font-size", "description": "Helper and error message font size." },
+            { "name": "--jb-range-input-message-margin", "description": "Message box margin." },
+            { "name": "--jb-range-input-message-box-display", "description": "Message box display mode." },
+            { "name": "--jb-range-input-message-color", "description": "Helper message color." },
+            { "name": "--jb-range-input-message-color-error", "description": "Validation error color." },
+            { "name": "--jb-range-input-color-disabled", "description": "Base color while disabled." },
+            { "name": "--jb-range-input-line-color-disabled", "description": "Inactive line color while disabled." },
+            { "name": "--jb-range-input-active-line-color-disabled", "description": "Active line color while disabled." },
+            { "name": "--jb-range-input-tick-color-disabled", "description": "Tick color while disabled." },
+            { "name": "--jb-range-input-minor-tick-color-disabled", "description": "Minor-tick color while disabled." },
+            { "name": "--jb-range-input-tick-label-color-disabled", "description": "Tick-label color while disabled." },
+            { "name": "--jb-range-input-handle-color-disabled", "description": "Handle color while disabled." },
+            { "name": "--jb-range-input-balloon-color-disabled", "description": "Drag balloon color while disabled." },
+            { "name": "--jb-range-input-balloon-text-color-disabled", "description": "Drag balloon text color while disabled." }
           ]
         }
       ],
       "exports": [
-        {
-          "kind": "js",
-          "name": "JBRangeInputWebComponent",
-          "declaration": {
-            "name": "JBRangeInputWebComponent",
-            "module": "lib/jb-range-input.ts"
-          }
-        }
+        { "kind": "js", "name": "JBRangeInputWebComponent", "declaration": { "name": "JBRangeInputWebComponent", "module": "lib/jb-range-input.ts" } },
+        { "kind": "custom-element-definition", "name": "jb-range-input", "declaration": { "name": "JBRangeInputWebComponent", "module": "lib/jb-range-input.ts" } }
       ]
     }
   ]

@@ -3,16 +3,42 @@
   width: var(--width);
 }
 
+:host(:state(disabled)) {
+  cursor: not-allowed;
+}
+
+:host(:state(disabled)) .range-handle {
+  cursor: not-allowed;
+}
+
 .jb-range-input-web-component {
   box-sizing: border-box;
   position: relative;
   width: 100%;
 
-  .dot-height-probe,
+  .message-box {
+    display: var(--message-box-display);
+    margin: var(--message-margin);
+    box-sizing: border-box;
+    padding: 4px var(--range-edge-padding, 0);
+    color: var(--message-color);
+    font-size: var(--message-font-size);
+
+    &:empty {
+      padding: 0;
+    }
+
+    &.error {
+      color: var(--message-color-error);
+    }
+  }
+
+  .tick-height-probe,
+  .minor-tick-height-probe,
   .handle-size-probe {
     position: absolute;
     width: 0;
-    height: var(--dot-height);
+    height: var(--tick-height);
     overflow: hidden;
     visibility: hidden;
     pointer-events: none;
@@ -20,6 +46,35 @@
 
   .handle-size-probe {
     height: var(--handle-size);
+  }
+
+  .minor-tick-height-probe {
+    height: var(--minor-tick-height);
+  }
+
+  .tick-labels {
+    position: absolute;
+    inset: 0;
+    top: calc(var(--height) / 2 + var(--tick-height) / 2 + var(--tick-label-gap));
+    height: 0;
+    color: var(--tick-label-color);
+    font-size: var(--tick-label-font-size);
+    line-height: var(--tick-label-line-height);
+    pointer-events: none;
+
+    .tick-label {
+      position: absolute;
+      white-space: nowrap;
+      transform: translateX(-50%);
+
+      &.--start {
+        transform: none;
+      }
+
+      &.--end {
+        transform: translateX(-100%);
+      }
+    }
   }
 
   .range-svg {
@@ -42,13 +97,18 @@
       stroke-dasharray: var(--active-line-dash-array);
     }
 
-    .range-dots {
-      .range-dot {
+    .range-ticks {
+      .range-tick {
         fill: none;
-        stroke: var(--dot-color);
+        stroke: var(--tick-color);
         stroke-linecap: round;
-        stroke-width: var(--dot-width);
+        stroke-width: var(--tick-width);
         vector-effect: non-scaling-stroke;
+      }
+
+      .range-minor-tick {
+        stroke: var(--minor-tick-color);
+        stroke-width: var(--minor-tick-width);
       }
     }
 
@@ -97,6 +157,12 @@
           transform: scale(1);
         }
       }
+
+      &.--hover {
+        .range-balloon-content {
+          transform: translateY(calc(var(--balloon-hover-offset) * -1)) scale(1);
+        }
+      }
     }
 
     .range-balloon-label {
@@ -112,10 +178,17 @@
         font-weight: 600;
         dominant-baseline: middle;
         text-anchor: middle;
+        transition: transform 120ms ease-out;
       }
 
       &.--show {
         opacity: 1;
+      }
+
+      &.--hover {
+        .range-balloon-value {
+          transform: translateY(calc(var(--balloon-hover-offset) * -1));
+        }
       }
     }
 
