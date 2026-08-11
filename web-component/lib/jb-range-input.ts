@@ -10,7 +10,22 @@ export * from "./types.js";
 export class JBRangeInputWebComponent extends HTMLElement implements WithValidation<RangeInputValue>, JBFormInputStandards<RangeInputValue> {
   static formAssociated = true;
   static get observedAttributes(): string[] {
-    return ["min", "max", "step", "tick-step", "minor-tick-step", "show-tick-labels", "disable-balloon-rotation", "mode", "value", "disabled", "required", "message", "error"];
+    return [
+      "label",
+      "min",
+      "max",
+      "step",
+      "tick-step",
+      "minor-tick-step",
+      "show-tick-labels",
+      "disable-balloon-rotation",
+      "mode",
+      "value",
+      "disabled",
+      "required",
+      "message",
+      "error",
+    ];
   }
 
   #min = 0;
@@ -50,6 +65,15 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
 
   get name(): string {
     return this.getAttribute("name") ?? "";
+  }
+
+  get label(): string {
+    return this.getAttribute("label") ?? "";
+  }
+
+  set label(value: string) {
+    if (value) this.setAttribute("label", value);
+    else this.removeAttribute("label");
   }
 
   set name(value: string) {
@@ -257,6 +281,7 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
       },
       signal,
     );
+    this.#elements.label.addEventListener("click", () => this.#focusFirstHandle(), { signal });
     this.addEventListener(
       "invalid",
       () => {
@@ -284,6 +309,7 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
       if (!this.#isDirty) this.#initialValue = this.#cloneValue(this.#value);
       this.disabled = this.hasAttribute("disabled");
       this.required = this.hasAttribute("required");
+      this.#setLabel(this.label);
       this.#setMessage(this.message, false);
     }
     this.#resizeObserver.observe(this);
@@ -345,6 +371,9 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
     }
     if (name === "required") {
       this.required = newValue !== null;
+    }
+    if (name === "label") {
+      this.#setLabel(newValue ?? "");
     }
     if (name === "message" && !this.#elements.messageBox.classList.contains("error")) {
       this.#setMessage(newValue ?? "", false);
@@ -443,6 +472,16 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
     this.#syncMessageAccessibility();
   }
 
+  #setLabel(label: string): void {
+    this.#elements.label.textContent = label;
+    if (this.#internals) this.#internals.ariaLabel = label || null;
+    this.#elements.svg.setAttribute("aria-labelledby", label ? this.#elements.label.id : "range-title");
+  }
+
+  #focusFirstHandle(): void {
+    (this.#elements.handles.firstElementChild as SVGCircleElement | null)?.focus();
+  }
+
   formResetCallback(): void {
     this.#isDirty = false;
     this.#setValue(this.#initialValue);
@@ -465,7 +504,7 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
     if (this.required) {
       validations.push({
         validator: () => this.#hasValue,
-        message: getRequiredMessage(i18n, null),
+        message: getRequiredMessage(i18n, this.label || null),
         stateType: "valueMissing",
       });
     }

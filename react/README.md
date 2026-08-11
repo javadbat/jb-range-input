@@ -20,6 +20,7 @@ import { JBRangeInput } from "jb-range-input/react";
 
 | prop | type | default | description |
 | --- | --- | --- | --- |
+| `label` | `string` | `""` | Visible label text and accessible aria label. |
 | `value` | `number \| [number, number]` | `0` | Controlled selected value. Use a tuple when `mode="range"`. |
 | `initialValue` | `number \| [number, number]` | `0` | Initial and form-reset value. |
 | `mode` | `"single" \| "range"` | `"single"` | Selects one value or a start/end pair. |

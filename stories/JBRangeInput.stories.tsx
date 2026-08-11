@@ -15,12 +15,14 @@ const meta = {
     ),
   ],
   args: {
+    label: "Range value",
     min: 0,
     max: 10,
     step: 1,
     tickStep: 1,
   },
   argTypes: {
+    label: { control: "text" },
     min: { control: "number" },
     max: { control: "number" },
     step: { control: "number" },
@@ -40,7 +42,19 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Normal: Story = {};
+export const Normal: Story = {
+  play: async ({ canvasElement }) => {
+    const rangeInput = canvasElement.querySelector<JBRangeInputWebComponent>("jb-range-input")!;
+    const label = rangeInput.shadowRoot!.querySelector<HTMLLabelElement>("[part='label']")!;
+    const range = rangeInput.shadowRoot!.querySelector<SVGSVGElement>("[part='range']")!;
+    const firstHandle = rangeInput.shadowRoot!.querySelector<SVGCircleElement>("[part~='range-handle']")!;
+
+    await waitFor(() => expect(label.textContent).toBe("Range value"));
+    expect(range.getAttribute("aria-labelledby")).toBe("range-label");
+    label.click();
+    expect(rangeInput.shadowRoot!.activeElement).toBe(firstHandle);
+  },
+};
 
 export const WithoutBalloonRotation: Story = {
   args: {

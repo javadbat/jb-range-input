@@ -19,6 +19,7 @@ export type JBRangeInputProps = PropsWithChildren<
     mode?: RangeInputMode;
     value?: RangeInputValue;
     initialValue?: RangeInputValue;
+    label?: string;
     name?: string;
     disabled?: boolean;
     required?: boolean;

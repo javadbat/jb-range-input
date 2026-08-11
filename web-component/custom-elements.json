@@ -14,6 +14,7 @@
           "tagName": "jb-range-input",
           "superclass": { "name": "HTMLElement" },
           "attributes": [
+            { "name": "label", "type": { "text": "string" }, "description": "Visible label text and accessible aria label." },
             { "name": "value", "type": { "text": "number | string" }, "default": "0", "description": "Selected number, or a comma-separated start/end pair in range mode." },
             { "name": "mode", "type": { "text": "'single' | 'range'" }, "default": "'single'", "description": "Selects one value or a start/end pair." },
             { "name": "min", "type": { "text": "number" }, "default": "0", "description": "Minimum selectable value." },
@@ -31,6 +32,7 @@
             { "name": "error", "type": { "text": "string" }, "description": "External validation error message." }
           ],
           "members": [
+            { "kind": "field", "name": "label", "type": { "text": "string" }, "description": "Visible label text and accessible aria label." },
             { "kind": "field", "name": "value", "type": { "text": "number | [number, number]" }, "description": "Current normalized value." },
             { "kind": "field", "name": "initialValue", "type": { "text": "number | [number, number]" }, "description": "Initial and form-reset value." },
             { "kind": "field", "name": "mode", "type": { "text": "'single' | 'range'" }, "description": "Current selection mode." },
@@ -74,6 +76,7 @@
           ],
           "cssParts": [
             { "name": "root", "description": "Root component wrapper." },
+            { "name": "label", "description": "Visible label element." },
             { "name": "range", "description": "Main SVG range surface." },
             { "name": "range-line", "description": "Inactive track line." },
             { "name": "range-active-line", "description": "Active track line." },
@@ -101,6 +104,14 @@
           "cssProperties": [
             { "name": "--jb-range-input-width", "description": "Component width." },
             { "name": "--jb-range-input-height", "description": "Range SVG height." },
+            { "name": "--jb-range-input-label-margin", "description": "Label margin." },
+            { "name": "--jb-range-input-label-font-size", "description": "Base label font size." },
+            { "name": "--jb-range-input-label-font-size-xs", "description": "Label font size for size xs." },
+            { "name": "--jb-range-input-label-font-size-sm", "description": "Label font size for size sm." },
+            { "name": "--jb-range-input-label-font-size-lg", "description": "Label font size for size lg." },
+            { "name": "--jb-range-input-label-font-size-xl", "description": "Label font size for size xl." },
+            { "name": "--jb-range-input-label-color", "description": "Label color." },
+            { "name": "--jb-range-input-label-font-weight", "description": "Label font weight." },
             { "name": "--jb-range-input-height-xs", "description": "Range SVG height for size xs." },
             { "name": "--jb-range-input-height-sm", "description": "Range SVG height for size sm." },
             { "name": "--jb-range-input-height-lg", "description": "Range SVG height for size lg." },

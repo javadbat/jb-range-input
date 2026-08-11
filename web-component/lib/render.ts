@@ -10,6 +10,7 @@ const BALLOON_ROTATION_RESET_DELAY = 80;
 
 export type RangeElements = {
   root: HTMLDivElement;
+  label: HTMLLabelElement;
   svg: SVGSVGElement;
   line: SVGLineElement;
   activeLine: SVGLineElement;
@@ -39,39 +40,42 @@ export type RangeInteractionOptions = {
 export function renderHTML(): string {
   return /* html */ `
     <div class="jb-range-input-web-component" part="root">
-      <svg class="range-svg" height="64" role="group" aria-labelledby="range-title" aria-describedby="message" part="range">
-        <title id="range-title">Range values</title>
-        <defs>
-          <filter id="range-join-filter" x="-50%" y="-100%" width="200%" height="250%" color-interpolation-filters="sRGB">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"></feGaussianBlur>
-            <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -9" result="joined"></feColorMatrix>
-            <feBlend in="SourceGraphic" in2="joined"></feBlend>
-          </filter>
-        </defs>
-        <line class="range-line" y1="32" y2="32" part="range-line"></line>
-        <line class="range-active-line" y1="32" y2="32" part="range-active-line"></line>
-        <g class="range-ticks" part="range-ticks"></g>
-        <g class="range-joined-shapes" part="range-joined-shapes">
-          <g class="range-handles" part="range-handles"></g>
-          <g class="range-balloon" part="range-balloon" aria-hidden="true">
-            <g class="range-balloon-scaler">
-              <g class="range-balloon-content" part="range-balloon-content">
-                <path class="range-balloon-shape" part="range-balloon-shape" d="M 0 -4 C -4 -11 -20 -25 -20 -40 A 20 20 0 1 1 20 -40 C 20 -25 4 -11 0 -4 Z"></path>
+      <label class="label" id="range-label" part="label"></label>
+      <div class="range-container">
+        <svg class="range-svg" height="64" role="group" aria-labelledby="range-title" aria-describedby="message" part="range">
+          <title id="range-title">Range values</title>
+          <defs>
+            <filter id="range-join-filter" x="-50%" y="-100%" width="200%" height="250%" color-interpolation-filters="sRGB">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"></feGaussianBlur>
+              <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -9" result="joined"></feColorMatrix>
+              <feBlend in="SourceGraphic" in2="joined"></feBlend>
+            </filter>
+          </defs>
+          <line class="range-line" y1="32" y2="32" part="range-line"></line>
+          <line class="range-active-line" y1="32" y2="32" part="range-active-line"></line>
+          <g class="range-ticks" part="range-ticks"></g>
+          <g class="range-joined-shapes" part="range-joined-shapes">
+            <g class="range-handles" part="range-handles"></g>
+            <g class="range-balloon" part="range-balloon" aria-hidden="true">
+              <g class="range-balloon-scaler">
+                <g class="range-balloon-content" part="range-balloon-content">
+                  <path class="range-balloon-shape" part="range-balloon-shape" d="M 0 -4 C -4 -11 -20 -25 -20 -40 A 20 20 0 1 1 20 -40 C 20 -25 4 -11 0 -4 Z"></path>
+                </g>
               </g>
             </g>
           </g>
-        </g>
-        <g class="range-balloon-label" part="range-balloon-label" aria-hidden="true">
-          <g class="range-balloon-label-scaler">
-            <text class="range-balloon-value" part="range-balloon-value" x="0" y="-40"></text>
+          <g class="range-balloon-label" part="range-balloon-label" aria-hidden="true">
+            <g class="range-balloon-label-scaler">
+              <text class="range-balloon-value" part="range-balloon-value" x="0" y="-40"></text>
+            </g>
           </g>
-        </g>
-      </svg>
-      <div class="tick-labels" part="tick-labels" aria-hidden="true"></div>
+        </svg>
+        <div class="tick-labels" part="tick-labels" aria-hidden="true"></div>
+        <span class="tick-height-probe" aria-hidden="true"></span>
+        <span class="minor-tick-height-probe" aria-hidden="true"></span>
+        <span class="handle-size-probe" aria-hidden="true"></span>
+      </div>
       <div class="message-box" id="message" part="message" aria-live="polite" role="status"></div>
-      <span class="tick-height-probe" aria-hidden="true"></span>
-      <span class="minor-tick-height-probe" aria-hidden="true"></span>
-      <span class="handle-size-probe" aria-hidden="true"></span>
     </div>
   `;
 }
@@ -84,6 +88,7 @@ export function initializeDOM(host: HTMLElement): RangeElements {
 
   return {
     root: shadowRoot.querySelector<HTMLDivElement>(".jb-range-input-web-component")!,
+    label: shadowRoot.querySelector<HTMLLabelElement>(".label")!,
     svg: shadowRoot.querySelector<SVGSVGElement>(".range-svg")!,
     line: shadowRoot.querySelector<SVGLineElement>(".range-line")!,
     activeLine: shadowRoot.querySelector<SVGLineElement>(".range-active-line")!,

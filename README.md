@@ -46,7 +46,7 @@ import "jb-range-input";
 ```
 
 ```html
-<jb-range-input min="0" max="10" value="4"></jb-range-input>
+<jb-range-input label="Range value" min="0" max="10" value="4"></jb-range-input>
 ```
 
 ### CDN
@@ -61,6 +61,7 @@ import "jb-range-input";
 
 | name | type | default | description |
 | --- | --- | --- | --- |
+| `label` | `string` | `""` | Visible label text and accessible aria label. |
 | `value` | `number \| "start,end"` | `0` | Selected value. In range mode, use a comma-separated pair such as `"2,8"`. |
 | `mode` | `"single" \| "range"` | `"single"` | Selects one value or a start/end pair. |
 | `min` | `number` | `0` | Minimum selectable value. |
@@ -81,6 +82,7 @@ import "jb-range-input";
 
 | name | type | readonly | description |
 | --- | --- | --- | --- |
+| `label` | `string` | no | Visible label text and accessible aria label. |
 | `value` | `number \| [number, number]` | no | Current normalized value. Returns a tuple in range mode. |
 | `initialValue` | `number \| [number, number]` | no | Initial and form-reset value. It initializes `value` until the live value becomes dirty. |
 | `mode` | `"single" \| "range"` | no | Current selection mode. |
@@ -265,6 +267,7 @@ Keyboard changes remain constrained to `min`, `max`, and the other handle in ran
 | part | description |
 | --- | --- |
 | `root` | Root component wrapper. |
+| `label` | Visible label element. |
 | `range` | Main SVG range surface. |
 | `range-line` | Inactive track line. |
 | `range-active-line` | Active track from the minimum or between range handles. |
@@ -298,6 +301,10 @@ Keyboard changes remain constrained to `min`, `max`, and the other handle in ran
 | --- | --- | --- |
 | `--jb-range-input-width` | `100%` | Component width. |
 | `--jb-range-input-height` | `4rem` | SVG height. |
+| `--jb-range-input-label-margin` | `0.125rem 0` | Label margin. The component applies range-edge padding separately to align the label with the track. |
+| `--jb-range-input-label-font-size` | `0.8rem` | Label font size. |
+| `--jb-range-input-label-color` | `--jb-content-primary` | Label color. |
+| `--jb-range-input-label-font-weight` | `300` | Label font weight. |
 | `--jb-range-input-color` | `--jb-primary` | Base color used by active elements. |
 | `--jb-range-input-line-color` | `--jb-content-secondary` | Inactive line color. |
 | `--jb-range-input-line-width` | `1` | Inactive line stroke width. |
@@ -337,7 +344,7 @@ Keyboard changes remain constrained to `min`, `max`, and the other handle in ran
 | `--jb-range-input-balloon-color-disabled` | disabled base color | Balloon color while disabled. |
 | `--jb-range-input-balloon-text-color-disabled` | `--jb-content-secondary` | Balloon text color while disabled. |
 
-Each size variant also exposes `-xs`, `-sm`, `-lg`, and `-xl` overrides for `height`, `tick-height`, `minor-tick-height`, `handle-size`, `tick-label-font-size`, `message-font-size`, `balloon-scale`, and `balloon-hover-offset`. For example, use `--jb-range-input-handle-size-sm` to customize only the `sm` handle.
+Each size variant also exposes `-xs`, `-sm`, `-lg`, and `-xl` overrides for `height`, `label-font-size`, `tick-height`, `minor-tick-height`, `handle-size`, `tick-label-font-size`, `message-font-size`, `balloon-scale`, and `balloon-hover-offset`. For example, use `--jb-range-input-label-font-size-sm` to customize only the `sm` label.
 
 ```css
 jb-range-input {
@@ -354,9 +361,9 @@ jb-range-input:state(invalid)::part(range-handle) {
 ## Accessibility notes
 
 - Each handle has `role="slider"`, keyboard focus, and `aria-valuemin`, `aria-valuemax`, `aria-valuenow`, and `aria-valuetext`.
+- The `label` attribute renders a visible label, provides the component's accessible label, and focuses the first handle when clicked.
 - Disabled handles are removed from the tab order and pointer/keyboard interaction is blocked.
 - Required, disabled, and invalid states are exposed through ARIA and custom states.
-- Provide nearby visible text that identifies what the range controls.
 
 ## Related docs
 

@@ -18,6 +18,7 @@ declare module "react" {
       mode?: RangeInputMode;
       value?: RangeInputValue;
       initialValue?: RangeInputValue;
+      label?: string;
       name?: string;
       disabled?: boolean;
       required?: boolean;
