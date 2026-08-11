@@ -11,6 +11,10 @@
   cursor: not-allowed;
 }
 
+:host([disable-balloon-rotation]) .range-svg {
+  --balloon-rotation: 0deg !important;
+}
+
 .jb-range-input-web-component {
   box-sizing: border-box;
   position: relative;
@@ -140,7 +144,7 @@
       pointer-events: none;
 
       .range-balloon-scaler {
-        transform: scale(var(--balloon-scale));
+        transform: rotate(var(--balloon-rotation, 0deg)) scale(var(--balloon-scale));
         transform-origin: 0 0;
         transition: transform 120ms ease-out;
       }
@@ -166,7 +170,7 @@
 
       &.--hover {
         .range-balloon-scaler {
-          transform: translateY(calc(var(--balloon-hover-offset) * -1)) scale(var(--balloon-scale));
+          transform: translateY(calc(var(--balloon-hover-offset) * -1)) rotate(var(--balloon-rotation, 0deg)) scale(var(--balloon-scale));
         }
       }
     }
@@ -178,7 +182,7 @@
       transition: opacity 120ms ease-out;
 
       .range-balloon-label-scaler {
-        transform: scale(var(--balloon-scale));
+        transform: rotate(var(--balloon-rotation, 0deg)) scale(var(--balloon-scale));
         transform-origin: 0 0;
         transition: transform 120ms ease-out;
       }
@@ -198,7 +202,7 @@
 
       &.--hover {
         .range-balloon-label-scaler {
-          transform: translateY(calc(var(--balloon-hover-offset) * -1)) scale(var(--balloon-scale));
+          transform: translateY(calc(var(--balloon-hover-offset) * -1)) rotate(var(--balloon-rotation, 0deg)) scale(var(--balloon-scale));
         }
       }
     }

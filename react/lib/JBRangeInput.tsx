@@ -13,6 +13,7 @@ export type JBRangeInputProps = PropsWithChildren<
     tickStep?: number;
     minorTickStep?: number | null;
     showTickLabels?: boolean;
+    disableBalloonRotation?: boolean;
     tickLabelFormatter?: (value: number) => string;
     size?: SizeVariants;
     mode?: RangeInputMode;

@@ -27,6 +27,7 @@ const meta = {
     tickStep: { control: "number" },
     minorTickStep: { control: "number" },
     showTickLabels: { control: "boolean" },
+    disableBalloonRotation: { control: "boolean" },
     size: { control: "inline-radio", options: ["xs", "sm", "md", "lg", "xl"] },
     mode: { control: "inline-radio", options: ["single", "range"] },
     disabled: { control: "boolean" },
@@ -40,6 +41,13 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Normal: Story = {};
+
+export const WithoutBalloonRotation: Story = {
+  args: {
+    value: 5,
+    disableBalloonRotation: true,
+  },
+};
 
 export const SizeVariants: Story = {
   args: {

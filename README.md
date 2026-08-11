@@ -69,6 +69,7 @@ import "jb-range-input";
 | `tick-step` | `number` | `1` | Interval between visible tick marks. It does not constrain selection. |
 | `minor-tick-step` | `number` | none | Interval between optional minor ticks. Minor ticks never receive labels. |
 | `show-tick-labels` | `boolean` | `false` | Displays labels below major ticks. |
+| `disable-balloon-rotation` | `boolean` | `false` | Disables velocity-based balloon rotation while dragging. |
 | `size` | `"xs" \| "sm" \| "md" \| "lg" \| "xl"` | `"md"` | Visual size variant. |
 | `name` | `string` | `""` | Field name used during form submission. |
 | `disabled` | `boolean` | `false` | Disables pointer and keyboard interaction. |
@@ -89,6 +90,7 @@ import "jb-range-input";
 | `tickStep` | `number` | no | Visible tick interval. Non-positive or invalid values normalize to `1`. |
 | `minorTickStep` | `number \| null` | no | Minor-tick interval, or `null` to hide minor ticks. |
 | `showTickLabels` | `boolean` | no | Displays labels below major ticks. |
+| `disableBalloonRotation` | `boolean` | no | Disables velocity-based balloon rotation while dragging. |
 | `tickLabelFormatter` | `(value: number) => string` | no | Formats major-tick labels. Functions are configured through JavaScript, not attributes. |
 | `name` | `string` | no | Associated form field name. |
 | `disabled` | `boolean` | no | Enables or disables interaction. |
@@ -191,10 +193,16 @@ Values assigned between steps are snapped to the nearest valid step and clamped 
 ## Size variants
 
 Use `xs`, `sm`, `md`, `lg`, or `xl`. Omitting `size` uses the `md` styles.
-The balloon scales by 25 percentage points between adjacent sizes: 50%, 75%, 100%, 125%, and 150% respectively.
+The balloon scales by 15 percentage points between adjacent sizes: 70%, 85%, 100%, 115%, and 130% respectively.
 
 ```html
 <jb-range-input size="sm" value="4"></jb-range-input>
+```
+
+The balloon tilts subtly based on horizontal drag speed and returns to center when movement stops. Disable this motion when a quieter or less resource-intensive interaction is preferred:
+
+```html
+<jb-range-input disable-balloon-rotation></jb-range-input>
 ```
 
 ## Forms

@@ -10,7 +10,7 @@ export * from "./types.js";
 export class JBRangeInputWebComponent extends HTMLElement implements WithValidation<RangeInputValue>, JBFormInputStandards<RangeInputValue> {
   static formAssociated = true;
   static get observedAttributes(): string[] {
-    return ["min", "max", "step", "tick-step", "minor-tick-step", "show-tick-labels", "mode", "value", "disabled", "required", "message", "error"];
+    return ["min", "max", "step", "tick-step", "minor-tick-step", "show-tick-labels", "disable-balloon-rotation", "mode", "value", "disabled", "required", "message", "error"];
   }
 
   #min = 0;
@@ -19,6 +19,7 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
   #tickStep = 1;
   #minorTickStep: number | null = null;
   #showTickLabels = false;
+  #disableBalloonRotation = false;
   #tickLabelFormatter: (value: number) => string = value => String(value);
   #mode: RangeInputMode = "single";
   #value: RangeInputValue = 0;
@@ -174,6 +175,15 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
     this.#render(this.getBoundingClientRect().width);
   }
 
+  get disableBalloonRotation(): boolean {
+    return this.#disableBalloonRotation;
+  }
+
+  set disableBalloonRotation(value: boolean) {
+    this.#disableBalloonRotation = Boolean(value);
+    this.toggleAttribute("disable-balloon-rotation", this.#disableBalloonRotation);
+  }
+
   get tickLabelFormatter(): (value: number) => string {
     return this.#tickLabelFormatter;
   }
@@ -235,6 +245,7 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
         getMax: () => this.#max,
         getStep: () => this.#step,
         getDisabled: () => this.#disabled,
+        getBalloonRotationDisabled: () => this.#disableBalloonRotation,
         onInput: (handleIndex, value) => this.#updateValueFromHandle(handleIndex, value),
         onChange: () => {
           this.dispatchEvent(new Event("change", { bubbles: true, composed: true }));
@@ -264,6 +275,7 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
       this.#tickStep = normalizeStep(parseNumberAttribute(this.getAttribute("tick-step"), 1));
       this.#minorTickStep = this.hasAttribute("minor-tick-step") ? normalizeStep(parseNumberAttribute(this.getAttribute("minor-tick-step"), 1)) : null;
       this.#showTickLabels = this.hasAttribute("show-tick-labels");
+      this.#disableBalloonRotation = this.hasAttribute("disable-balloon-rotation");
       this.#mode = this.getAttribute("mode") === "range" ? "range" : "single";
       this.#hasValue = this.hasAttribute("value");
       this.#value = this.#parseValueAttribute(this.getAttribute("value"));
@@ -307,6 +319,9 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
     }
     if (name === "show-tick-labels") {
       this.#showTickLabels = newValue !== null;
+    }
+    if (name === "disable-balloon-rotation") {
+      this.#disableBalloonRotation = newValue !== null;
     }
     if (name === "mode") {
       if (!this.#isReflectingMode) {

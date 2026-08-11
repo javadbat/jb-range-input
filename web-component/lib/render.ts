@@ -4,6 +4,9 @@ import type { RangeInputValue } from "./types.js";
 import { normalizeStep, roundForSteps, snapValueToStep } from "./math.js";
 
 const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
+const MAX_BALLOON_ROTATION = 15;
+const BALLOON_ROTATION_SPEED_FACTOR = 8;
+const BALLOON_ROTATION_RESET_DELAY = 80;
 
 export type RangeElements = {
   root: HTMLDivElement;
@@ -27,6 +30,7 @@ export type RangeInteractionOptions = {
   getMax: () => number;
   getStep: () => number;
   getDisabled: () => boolean;
+  getBalloonRotationDisabled: () => boolean;
   onInput: (handleIndex: number, value: number) => number;
   onChange: () => void;
   onCancel: () => void;
@@ -305,6 +309,9 @@ export function registerRangeInteractions(elements: RangeElements, options: Rang
     activeHandleIndex: null,
     animationFrame: null,
     pendingPointerEvent: null,
+    lastPointerX: null,
+    lastPointerTimestamp: null,
+    rotationResetTimer: null,
   };
   registerPointerInteractions(elements, options, state, signal);
   registerHoverInteractions(elements, options, state, signal);
@@ -316,6 +323,9 @@ type RangeInteractionState = {
   activeHandleIndex: number | null;
   animationFrame: number | null;
   pendingPointerEvent: PointerEvent | null;
+  lastPointerX: number | null;
+  lastPointerTimestamp: number | null;
+  rotationResetTimer: number | null;
 };
 
 function registerPointerInteractions(elements: RangeElements, options: RangeInteractionOptions, state: RangeInteractionState, signal: AbortSignal): void {
@@ -326,6 +336,7 @@ function registerPointerInteractions(elements: RangeElements, options: RangeInte
       const handle = getHandle(event.target);
       if (!handle) return;
       state.activeHandleIndex = Number(handle.dataset.handleIndex);
+      startBalloonMotion(elements, state, event);
       elements.svg.classList.add("--dragging");
       elements.svg.setPointerCapture(event.pointerId);
       previewPointerPosition(elements, options, event, state.activeHandleIndex);
@@ -431,10 +442,49 @@ function schedulePointerPreview(elements: RangeElements, options: RangeInteracti
   state.animationFrame = requestAnimationFrame(() => {
     state.animationFrame = null;
     if (state.activeHandleIndex !== null && state.pendingPointerEvent) {
+      updateBalloonRotation(elements, options, state, state.pendingPointerEvent);
       previewPointerPosition(elements, options, state.pendingPointerEvent, state.activeHandleIndex);
     }
     state.pendingPointerEvent = null;
   });
+}
+
+function startBalloonMotion(elements: RangeElements, state: RangeInteractionState, event: PointerEvent): void {
+  resetBalloonRotation(elements, state);
+  state.lastPointerX = event.clientX;
+  state.lastPointerTimestamp = event.timeStamp;
+}
+
+function updateBalloonRotation(elements: RangeElements, options: RangeInteractionOptions, state: RangeInteractionState, event: PointerEvent): void {
+  if (options.getBalloonRotationDisabled()) {
+    resetBalloonRotation(elements, state);
+    return;
+  }
+  if (state.lastPointerX !== null && state.lastPointerTimestamp !== null) {
+    const elapsed = Math.max(1, event.timeStamp - state.lastPointerTimestamp);
+    const velocity = (event.clientX - state.lastPointerX) / elapsed;
+    const rotation = Math.max(-MAX_BALLOON_ROTATION, Math.min(MAX_BALLOON_ROTATION, -velocity * BALLOON_ROTATION_SPEED_FACTOR));
+    setBalloonRotation(elements, rotation);
+  }
+  state.lastPointerX = event.clientX;
+  state.lastPointerTimestamp = event.timeStamp;
+  if (state.rotationResetTimer !== null) window.clearTimeout(state.rotationResetTimer);
+  state.rotationResetTimer = window.setTimeout(() => {
+    state.rotationResetTimer = null;
+    setBalloonRotation(elements, 0);
+  }, BALLOON_ROTATION_RESET_DELAY);
+}
+
+function resetBalloonRotation(elements: RangeElements, state: RangeInteractionState): void {
+  if (state.rotationResetTimer !== null) window.clearTimeout(state.rotationResetTimer);
+  state.rotationResetTimer = null;
+  state.lastPointerX = null;
+  state.lastPointerTimestamp = null;
+  setBalloonRotation(elements, 0);
+}
+
+function setBalloonRotation(elements: RangeElements, rotation: number): void {
+  elements.svg.style.setProperty("--balloon-rotation", `${rotation}deg`);
 }
 
 function finishPointerInteraction(elements: RangeElements, options: RangeInteractionOptions, state: RangeInteractionState, event: PointerEvent): void {
@@ -458,6 +508,7 @@ function resetPointerInteraction(elements: RangeElements, state: RangeInteractio
   state.pendingPointerEvent = null;
   if (state.animationFrame !== null) cancelAnimationFrame(state.animationFrame);
   state.animationFrame = null;
+  resetBalloonRotation(elements, state);
   elements.svg.classList.remove("--dragging");
   hideBalloon(elements);
 }
