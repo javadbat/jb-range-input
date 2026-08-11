@@ -1,4 +1,4 @@
-import type { JBRangeInputWebComponent, RangeInputMode, RangeInputValue } from "jb-range-input";
+import type { JBRangeInputWebComponent, RangeInputMode, RangeInputValue, SizeVariants } from "jb-range-input";
 
 declare module "react" {
   namespace JSX {
@@ -13,6 +13,7 @@ declare module "react" {
       minorTickStep?: number | null;
       showTickLabels?: boolean;
       tickLabelFormatter?: (value: number) => string;
+      size?: SizeVariants;
       mode?: RangeInputMode;
       value?: RangeInputValue;
       initialValue?: RangeInputValue;

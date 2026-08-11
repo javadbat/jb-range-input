@@ -69,6 +69,7 @@ import "jb-range-input";
 | `tick-step` | `number` | `1` | Interval between visible tick marks. It does not constrain selection. |
 | `minor-tick-step` | `number` | none | Interval between optional minor ticks. Minor ticks never receive labels. |
 | `show-tick-labels` | `boolean` | `false` | Displays labels below major ticks. |
+| `size` | `"xs" \| "sm" \| "md" \| "lg" \| "xl"` | `"md"` | Visual size variant. |
 | `name` | `string` | `""` | Field name used during form submission. |
 | `disabled` | `boolean` | `false` | Disables pointer and keyboard interaction. |
 | `required` | `boolean` | `false` | Requires a value to be provided initially or selected by the user. |
@@ -187,6 +188,15 @@ rangeInput.tickLabelFormatter = value => `${value}%`;
 
 Values assigned between steps are snapped to the nearest valid step and clamped to the configured bounds.
 
+## Size variants
+
+Use `xs`, `sm`, `md`, `lg`, or `xl`. Omitting `size` uses the `md` styles.
+The balloon scales by 25 percentage points between adjacent sizes: 50%, 75%, 100%, 125%, and 150% respectively.
+
+```html
+<jb-range-input size="sm" value="4"></jb-range-input>
+```
+
 ## Forms
 
 `jb-range-input` participates in native forms. Single values are submitted as numeric strings. Range values are submitted as comma-separated strings such as `"20,80"`.
@@ -302,6 +312,7 @@ Keyboard changes remain constrained to `min`, `max`, and the other handle in ran
 | `--jb-range-input-balloon-color` | base color | Drag balloon color. |
 | `--jb-range-input-balloon-text-color` | `--jb-content-inverse` | Drag balloon text color. |
 | `--jb-range-input-balloon-font-size` | `0.75rem` | Drag balloon text size. |
+| `--jb-range-input-balloon-scale` | `1` | Base balloon scale. |
 | `--jb-range-input-balloon-hover-offset` | `0.375rem` | Balloon offset above the handle while hovered. |
 | `--jb-range-input-message-font-size` | `0.7rem` | Helper/error message font size. |
 | `--jb-range-input-message-margin` | `0` | Message box margin. |
@@ -317,6 +328,8 @@ Keyboard changes remain constrained to `min`, `max`, and the other handle in ran
 | `--jb-range-input-handle-color-disabled` | disabled base color | Handle color while disabled. |
 | `--jb-range-input-balloon-color-disabled` | disabled base color | Balloon color while disabled. |
 | `--jb-range-input-balloon-text-color-disabled` | `--jb-content-secondary` | Balloon text color while disabled. |
+
+Each size variant also exposes `-xs`, `-sm`, `-lg`, and `-xl` overrides for `height`, `tick-height`, `minor-tick-height`, `handle-size`, `tick-label-font-size`, `message-font-size`, `balloon-scale`, and `balloon-hover-offset`. For example, use `--jb-range-input-handle-size-sm` to customize only the `sm` handle.
 
 ```css
 jb-range-input {

@@ -139,6 +139,12 @@
     .range-balloon {
       pointer-events: none;
 
+      .range-balloon-scaler {
+        transform: scale(var(--balloon-scale));
+        transform-origin: 0 0;
+        transition: transform 120ms ease-out;
+      }
+
       .range-balloon-content {
         opacity: 0;
         transform: scale(0.82);
@@ -159,8 +165,8 @@
       }
 
       &.--hover {
-        .range-balloon-content {
-          transform: translateY(calc(var(--balloon-hover-offset) * -1)) scale(1);
+        .range-balloon-scaler {
+          transform: translateY(calc(var(--balloon-hover-offset) * -1)) scale(var(--balloon-scale));
         }
       }
     }
@@ -171,6 +177,12 @@
       transform-origin: 0 0;
       transition: opacity 120ms ease-out;
 
+      .range-balloon-label-scaler {
+        transform: scale(var(--balloon-scale));
+        transform-origin: 0 0;
+        transition: transform 120ms ease-out;
+      }
+
       .range-balloon-value {
         fill: var(--balloon-text-color);
         font-family: inherit;
@@ -178,7 +190,6 @@
         font-weight: 600;
         dominant-baseline: middle;
         text-anchor: middle;
-        transition: transform 120ms ease-out;
       }
 
       &.--show {
@@ -186,8 +197,8 @@
       }
 
       &.--hover {
-        .range-balloon-value {
-          transform: translateY(calc(var(--balloon-hover-offset) * -1));
+        .range-balloon-label-scaler {
+          transform: translateY(calc(var(--balloon-hover-offset) * -1)) scale(var(--balloon-scale));
         }
       }
     }

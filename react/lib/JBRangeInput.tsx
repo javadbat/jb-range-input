@@ -2,7 +2,7 @@
 
 import React, { type PropsWithChildren, useEffect, useImperativeHandle } from "react";
 import "jb-range-input";
-import type { JBRangeInputWebComponent, RangeInputMode, RangeInputValue } from "jb-range-input";
+import type { JBRangeInputWebComponent, RangeInputMode, RangeInputValue, SizeVariants } from "jb-range-input";
 import "./module-declaration.js";
 
 export type JBRangeInputProps = PropsWithChildren<
@@ -14,6 +14,7 @@ export type JBRangeInputProps = PropsWithChildren<
     minorTickStep?: number | null;
     showTickLabels?: boolean;
     tickLabelFormatter?: (value: number) => string;
+    size?: SizeVariants;
     mode?: RangeInputMode;
     value?: RangeInputValue;
     initialValue?: RangeInputValue;

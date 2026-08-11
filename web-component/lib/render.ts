@@ -50,13 +50,17 @@ export function renderHTML(): string {
         <g class="range-joined-shapes" part="range-joined-shapes">
           <g class="range-handles" part="range-handles"></g>
           <g class="range-balloon" part="range-balloon" aria-hidden="true">
-            <g class="range-balloon-content" part="range-balloon-content">
-              <path class="range-balloon-shape" part="range-balloon-shape" d="M 0 -4 C -4 -11 -20 -25 -20 -40 A 20 20 0 1 1 20 -40 C 20 -25 4 -11 0 -4 Z"></path>
+            <g class="range-balloon-scaler">
+              <g class="range-balloon-content" part="range-balloon-content">
+                <path class="range-balloon-shape" part="range-balloon-shape" d="M 0 -4 C -4 -11 -20 -25 -20 -40 A 20 20 0 1 1 20 -40 C 20 -25 4 -11 0 -4 Z"></path>
+              </g>
             </g>
           </g>
         </g>
         <g class="range-balloon-label" part="range-balloon-label" aria-hidden="true">
-          <text class="range-balloon-value" part="range-balloon-value" x="0" y="-40"></text>
+          <g class="range-balloon-label-scaler">
+            <text class="range-balloon-value" part="range-balloon-value" x="0" y="-40"></text>
+          </g>
         </g>
       </svg>
       <div class="tick-labels" part="tick-labels" aria-hidden="true"></div>

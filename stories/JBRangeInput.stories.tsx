@@ -27,6 +27,7 @@ const meta = {
     tickStep: { control: "number" },
     minorTickStep: { control: "number" },
     showTickLabels: { control: "boolean" },
+    size: { control: "inline-radio", options: ["xs", "sm", "md", "lg", "xl"] },
     mode: { control: "inline-radio", options: ["single", "range"] },
     disabled: { control: "boolean" },
     required: { control: "boolean" },
@@ -39,6 +40,24 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Normal: Story = {};
+
+export const SizeVariants: Story = {
+  args: {
+    tickStep: 5,
+    value: 5,
+    showTickLabels: true,
+  },
+  render: args => (
+    <div style={{ display: "grid", gap: "2rem" }}>
+      {(["xs", "sm", "md", "lg", "xl"] as const).map(size => (
+        <div key={size}>
+          <span>{size}</span>
+          <JBRangeInput {...args} size={size} />
+        </div>
+      ))}
+    </div>
+  ),
+};
 
 export const DecimalStep: Story = {
   args: {

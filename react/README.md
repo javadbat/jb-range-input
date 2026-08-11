@@ -29,6 +29,7 @@ import { JBRangeInput } from "jb-range-input/react";
 | `tickStep` | `number` | `1` | Interval between visible tick marks; it does not constrain selection. |
 | `minorTickStep` | `number \| null` | `null` | Interval between optional unlabeled minor ticks. |
 | `showTickLabels` | `boolean` | `false` | Displays labels below major ticks. |
+| `size` | `"xs" \| "sm" \| "md" \| "lg" \| "xl"` | `"md"` | Visual size variant. |
 | `tickLabelFormatter` | `(value: number) => string` | string conversion | Formats major-tick labels. |
 | `name` | `string` | `""` | Field name used during form submission. |
 | `disabled` | `boolean` | `false` | Disables pointer and keyboard interaction. |
@@ -85,6 +86,13 @@ If range mode receives one number, the wrapper treats it as the upper value and 
 ```
 
 This allows values such as `1.1` and `1.2`, but draws ticks only at whole numbers.
+
+Use the `size` prop to select an `xs`, `sm`, `md`, `lg`, or `xl` visual variant:
+The balloon scales to 50%, 75%, 100%, 125%, and 150% across those variants.
+
+```tsx
+<JBRangeInput size="sm" value={4} />
+```
 
 Add labels to major ticks and optional unlabeled minor ticks:
 
