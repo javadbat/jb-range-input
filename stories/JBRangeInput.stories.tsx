@@ -133,6 +133,17 @@ export const Disabled: Story = {
     value: 4,
     disabled: true,
   },
+  play: async ({ canvasElement }) => {
+    const rangeInput = canvasElement.querySelector<JBRangeInputWebComponent>("jb-range-input")!;
+    const handle = rangeInput.shadowRoot!.querySelector<SVGCircleElement>(".range-handle")!;
+
+    await waitFor(() => expect(rangeInput.disabled).toBe(true));
+    expect(rangeInput.hasAttribute("disabled")).toBe(true);
+    expect(handle.getAttribute("tabindex")).toBe("-1");
+
+    handle.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
+    expect(rangeInput.value).toBe(4);
+  },
 };
 
 export const WithMessage: Story = {

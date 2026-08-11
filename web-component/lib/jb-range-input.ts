@@ -76,6 +76,7 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
 
   set disabled(value: boolean) {
     this.#disabled = Boolean(value);
+    this.toggleAttribute("disabled", this.#disabled);
     if (this.#disabled) this.#internals?.states?.add("disabled");
     else this.#internals?.states?.delete("disabled");
     this.#elements.svg.setAttribute("aria-disabled", String(this.#disabled));
@@ -90,6 +91,7 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
 
   set required(value: boolean) {
     this.#required = Boolean(value);
+    this.toggleAttribute("required", this.#required);
     if (this.#required) this.#internals?.states?.add("required");
     else this.#internals?.states?.delete("required");
     this.#elements.svg.setAttribute("aria-required", String(this.#required));
