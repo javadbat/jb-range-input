@@ -15,8 +15,9 @@
           "superclass": { "name": "HTMLElement" },
           "attributes": [
             { "name": "label", "type": { "text": "string" }, "description": "Visible label text and accessible aria label." },
-            { "name": "value", "type": { "text": "number | string" }, "default": "0", "description": "Selected number, or a comma-separated start/end pair in range mode." },
+            { "name": "value", "type": { "text": "number | string" }, "description": "Selected number, or a comma-separated start/end pair in range mode. Defaults to zero when zero is in range, min otherwise in single mode, and min,max in range mode." },
             { "name": "mode", "type": { "text": "'single' | 'range'" }, "default": "'single'", "description": "Selects one value or a start/end pair." },
+            { "name": "start-point", "type": { "text": "number" }, "description": "Start of the active line in single mode; defaults like the single-mode value." },
             { "name": "min", "type": { "text": "number" }, "default": "0", "description": "Minimum selectable value." },
             { "name": "max", "type": { "text": "number" }, "default": "10", "description": "Maximum selectable value." },
             { "name": "step", "type": { "text": "number" }, "default": "1", "description": "Selectable and keyboard increment." },
@@ -36,6 +37,7 @@
             { "kind": "field", "name": "value", "type": { "text": "number | [number, number]" }, "description": "Current normalized value." },
             { "kind": "field", "name": "initialValue", "type": { "text": "number | [number, number]" }, "description": "Initial and form-reset value." },
             { "kind": "field", "name": "mode", "type": { "text": "'single' | 'range'" }, "description": "Current selection mode." },
+            { "kind": "field", "name": "startPoint", "type": { "text": "number" }, "description": "Start of the active line in single mode." },
             { "kind": "field", "name": "min", "type": { "text": "number" }, "description": "Minimum selectable value." },
             { "kind": "field", "name": "max", "type": { "text": "number" }, "description": "Maximum selectable value." },
             { "kind": "field", "name": "step", "type": { "text": "number" }, "description": "Selectable increment." },

@@ -1,0 +1,17 @@
+jb-range-input.porcelain-style {
+  --jb-range-input-line-color: #c9ddf2;
+  --jb-range-input-active-line-color: #2f65a7;
+  --jb-range-input-tick-color: #6b91bf;
+  --jb-range-input-minor-tick-color: #b8cee5;
+  --jb-range-input-handle-color: #ffffff;
+  --jb-range-input-balloon-color: #2f65a7;
+  --jb-range-input-balloon-text-color: #ffffff;
+  --jb-range-input-line-width: 6;
+  --jb-range-input-active-line-width: 6;
+  --jb-range-input-handle-size: 0.75rem;
+  --jb-range-input-line-dash-array: 1 0;
+}
+
+jb-range-input.porcelain-style::part(range-handles) {
+  filter: drop-shadow(0 0.2rem 0.35rem rgb(47 101 167 / 0.3));
+}

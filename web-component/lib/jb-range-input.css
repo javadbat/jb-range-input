@@ -138,6 +138,7 @@
     .range-handles {
       .range-handle {
         fill: var(--handle-color);
+        /* filter: url("#range-join-filter"); */
         stroke:none;
         vector-effect: non-scaling-stroke;
         cursor: grab;
@@ -155,7 +156,7 @@
       }
     }
 
-    .range-joined-shapes {
+    .range-joined-shapes/*,.range-joined-shapes path,.range-joined-shapes circle*/{
       filter: url("#range-join-filter");
     }
 
@@ -176,6 +177,7 @@
 
         .range-balloon-shape {
           fill: var(--balloon-color);
+          /* filter: url("#range-join-filter"); */
         }
 
       }

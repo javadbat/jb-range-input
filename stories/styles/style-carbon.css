@@ -1,0 +1,17 @@
+jb-range-input.carbon-style {
+  --jb-range-input-line-color: #525252;
+  --jb-range-input-active-line-color: #0f62fe;
+  --jb-range-input-tick-color: #8d8d8d;
+  --jb-range-input-minor-tick-color: #525252;
+  --jb-range-input-handle-color: #0f62fe;
+  --jb-range-input-balloon-color: #262626;
+  --jb-range-input-balloon-text-color: #f4f4f4;
+  --jb-range-input-line-width: 4;
+  --jb-range-input-active-line-width: 4;
+  --jb-range-input-handle-size: 0.625rem;
+  --jb-range-input-line-dash-array: 1 0;
+}
+
+jb-range-input.carbon-style::part(range) {
+  shape-rendering: geometricPrecision;
+}

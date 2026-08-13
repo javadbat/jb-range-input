@@ -17,6 +17,7 @@ declare module "react" {
       size?: SizeVariants;
       mode?: RangeInputMode;
       value?: RangeInputValue;
+      startPoint?: number;
       initialValue?: RangeInputValue;
       label?: string;
       name?: string;

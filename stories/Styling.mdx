@@ -1,0 +1,325 @@
+import { Meta, Source, Story, Title } from '@storybook/addon-docs/blocks';
+import * as StyleStories from './Styles.stories';
+import antDesignThemeCss from '../../../docs/styles/ant-design.css?raw';
+import auroraThemeCss from '../../../docs/styles/aurora.css?raw';
+import bootstrapThemeCss from '../../../docs/styles/bootstrap.css?raw';
+import candyThemeCss from '../../../docs/styles/candy.css?raw';
+import carbonThemeCss from '../../../docs/styles/carbon.css?raw';
+import cupertinoThemeCss from '../../../docs/styles/cupertino.css?raw';
+import fluentThemeCss from '../../../docs/styles/fluent.css?raw';
+import forestThemeCss from '../../../docs/styles/forest.css?raw';
+import materialThemeCss from '../../../docs/styles/material.css?raw';
+import porcelainThemeCss from '../../../docs/styles/porcelain.css?raw';
+import sunsetThemeCss from '../../../docs/styles/sunset.css?raw';
+import terminalThemeCss from '../../../docs/styles/terminal.css?raw';
+import antDesignRangeInputCss from './styles/style-ant-design.css?raw';
+import auroraRangeInputCss from './styles/style-aurora.css?raw';
+import bootstrapRangeInputCss from './styles/style-bootstrap.css?raw';
+import candyRangeInputCss from './styles/style-candy.css?raw';
+import carbonRangeInputCss from './styles/style-carbon.css?raw';
+import cupertinoRangeInputCss from './styles/style-cupertino.css?raw';
+import fluentRangeInputCss from './styles/style-fluent.css?raw';
+import forestRangeInputCss from './styles/style-forest.css?raw';
+import materialRangeInputCss from './styles/style-material.css?raw';
+import porcelainRangeInputCss from './styles/style-porcelain.css?raw';
+import sunsetRangeInputCss from './styles/style-sunset.css?raw';
+import terminalRangeInputCss from './styles/style-terminal.css?raw';
+
+<Meta title="Components/form elements/JBRangeInput/Styling" />
+
+<Title>Styling</Title>
+
+`JBRangeInput` styling is theme-driven. Use common design tokens for product-level consistency, component variables for the range input API, and CSS parts only for official exposed surfaces.
+
+## Live Gallery
+
+<Story of={StyleStories.Gallery} />
+
+<Source of={StyleStories.Gallery} />
+
+## Common Design Tokens
+
+Use the core theme docs as the source of truth for shared design-system variables:
+
+- [Theme Colors](../../jb-core/theme/stories/colors.mdx) explains the general color palette variables, default colors, customization approaches, and color generation helpers.
+- [Theme Sizes](../../jb-core/theme/stories/sizes.mdx) explains shared size and radius variables.
+- [Theme Custom Galleries](https://javadbat.github.io/design-system/?path=/docs/theme-custom-material--docs) gathers the shared custom style recipes across components.
+
+Range input recipes should use those common tokens where possible, then map them into `--jb-range-input-*` variables only where the range input needs a component-specific value.
+
+In single mode, `startPoint` controls where the active line begins. If it is omitted, it follows the same default as `value`: zero when zero is within the range, otherwise `min`. It is ignored in range mode.
+
+## Styling Model
+
+- Reusable example theme packs live in [`docs/styles`](https://github.com/javadbat/design-system/tree/main/docs/styles).
+- Component recipes live in [`modules/jb-range-input/stories/styles`](https://github.com/javadbat/design-system/tree/main/modules/jb-range-input/stories/styles).
+- Public component variables use the `--jb-range-input-*` prefix and are the stable styling API.
+- Exposed parts provide targeted effects and styling when a variable is not sufficient.
+
+Each style story combines one shared theme class with one range-input-specific recipe on `JBRangeInput`.
+
+## Recommended Customization Path
+
+1. Use `--jb-range-input-*` variables first for track, active track, ticks, handles, balloon, label, and message styling.
+2. Use shared variables from [Theme Colors](../../jb-core/theme/stories/colors.mdx) and [Theme Sizes](../../jb-core/theme/stories/sizes.mdx) when the value should follow the design system.
+3. Use host styles for layout context such as width and surrounding spacing.
+4. Use `::part(...)` for targeted effects such as handle shadows or track filters.
+5. Put reusable theme values in `docs/styles`; keep range-input-specific mappings in this component's `stories/styles` folder.
+
+## Parts And States
+
+<table>
+  <thead><tr><th>Part</th><th>Element</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td><code>root</code></td><td>Component content wrapper</td><td>Targets the complete internal layout.</td></tr>
+    <tr><td><code>label</code></td><td>Visible label</td><td>Use for targeted label typography.</td></tr>
+    <tr><td><code>range</code></td><td>Main SVG</td><td>Useful for whole-control filters and effects.</td></tr>
+    <tr><td><code>range-line</code></td><td>Inactive track</td><td>Targets the unselected track.</td></tr>
+    <tr><td><code>range-active-line</code></td><td>Active track</td><td>Targets the selected track segment.</td></tr>
+    <tr><td><code>range-ticks</code></td><td>Tick group</td><td>Contains all major and minor ticks.</td></tr>
+    <tr><td><code>range-tick</code></td><td>Every tick</td><td>Shared token on dynamically rendered ticks.</td></tr>
+    <tr><td><code>range-major-tick</code></td><td>Major tick</td><td>Targets major ticks only.</td></tr>
+    <tr><td><code>range-minor-tick</code></td><td>Minor tick</td><td>Targets minor ticks only.</td></tr>
+    <tr><td><code>range-joined-shapes</code></td><td>Joined balloon and handle group</td><td>Targets shapes processed by the SVG join filter.</td></tr>
+    <tr><td><code>range-handles</code></td><td>Handle group</td><td>Useful for a shared shadow or filter.</td></tr>
+    <tr><td><code>range-handle</code></td><td>Individual handle</td><td>Repeated for single and range modes.</td></tr>
+    <tr><td><code>range-balloon</code></td><td>Balloon group</td><td>Targets the value balloon container.</td></tr>
+    <tr><td><code>range-balloon-content</code></td><td>Animated balloon content</td><td>Targets the balloon reveal surface.</td></tr>
+    <tr><td><code>range-balloon-shape</code></td><td>Balloon path</td><td>Targets the visible SVG balloon shape.</td></tr>
+    <tr><td><code>range-balloon-label</code></td><td>Balloon label group</td><td>Targets the animated value-label container.</td></tr>
+    <tr><td><code>range-balloon-value</code></td><td>Balloon value text</td><td>Use for targeted value typography.</td></tr>
+    <tr><td><code>tick-labels</code></td><td>Tick-label container</td><td>Contains all generated tick labels.</td></tr>
+    <tr><td><code>tick-label</code></td><td>Individual tick label</td><td>Repeated when tick labels are enabled.</td></tr>
+    <tr><td><code>message</code></td><td>Helper or validation message</td><td>Targets the text below the range.</td></tr>
+  </tbody>
+</table>
+
+<table>
+  <thead><tr><th>State Or Attribute</th><th>Meaning</th><th>Example Selector</th></tr></thead>
+  <tbody>
+    <tr><td><code>:state(disabled)</code></td><td>The range cannot be changed.</td><td><code>jb-range-input:state(disabled)::part(range)</code></td></tr>
+    <tr><td><code>:state(invalid)</code></td><td>A validation error is visible.</td><td><code>jb-range-input:state(invalid)::part(message)</code></td></tr>
+    <tr><td><code>[size]</code></td><td>Selects the <code>xs</code>, <code>sm</code>, <code>md</code>, <code>lg</code>, or <code>xl</code> sizing preset.</td><td><code>jb-range-input[size="lg"]</code></td></tr>
+    <tr><td><code>[disable-balloon-rotation]</code></td><td>Keeps the balloon upright instead of following the track angle.</td><td><code>jb-range-input[disable-balloon-rotation]::part(range-balloon)</code></td></tr>
+  </tbody>
+</table>
+
+## CSS Variables
+
+### Size And Typography
+
+<table>
+  <thead><tr><th>Variable</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td><code>--jb-range-input-width</code></td><td>Host width.</td></tr>
+    <tr><td><code>--jb-range-input-height</code></td><td>Base SVG range height.</td></tr>
+    <tr><td><code>--jb-range-input-height-xs</code></td><td>Range height for the extra-small size.</td></tr>
+    <tr><td><code>--jb-range-input-height-sm</code></td><td>Range height for the small size.</td></tr>
+    <tr><td><code>--jb-range-input-height-lg</code></td><td>Range height for the large size.</td></tr>
+    <tr><td><code>--jb-range-input-height-xl</code></td><td>Range height for the extra-large size.</td></tr>
+    <tr><td><code>--jb-range-input-line-width</code></td><td>Inactive track stroke width.</td></tr>
+    <tr><td><code>--jb-range-input-active-line-width</code></td><td>Active track stroke width.</td></tr>
+    <tr><td><code>--jb-range-input-tick-width</code></td><td>Major tick stroke width; falls back to <code>--jb-range-input-tick-size</code>.</td></tr>
+    <tr><td><code>--jb-range-input-tick-height</code></td><td>Base major tick height.</td></tr>
+    <tr><td><code>--jb-range-input-tick-height-xs</code></td><td>Major tick height for the extra-small size.</td></tr>
+    <tr><td><code>--jb-range-input-tick-height-sm</code></td><td>Major tick height for the small size.</td></tr>
+    <tr><td><code>--jb-range-input-tick-height-lg</code></td><td>Major tick height for the large size.</td></tr>
+    <tr><td><code>--jb-range-input-tick-height-xl</code></td><td>Major tick height for the extra-large size.</td></tr>
+    <tr><td><code>--jb-range-input-minor-tick-width</code></td><td>Minor tick stroke width.</td></tr>
+    <tr><td><code>--jb-range-input-minor-tick-height</code></td><td>Base minor tick height.</td></tr>
+    <tr><td><code>--jb-range-input-minor-tick-height-xs</code></td><td>Minor tick height for the extra-small size.</td></tr>
+    <tr><td><code>--jb-range-input-minor-tick-height-sm</code></td><td>Minor tick height for the small size.</td></tr>
+    <tr><td><code>--jb-range-input-minor-tick-height-lg</code></td><td>Minor tick height for the large size.</td></tr>
+    <tr><td><code>--jb-range-input-minor-tick-height-xl</code></td><td>Minor tick height for the extra-large size.</td></tr>
+    <tr><td><code>--jb-range-input-handle-size</code></td><td>Base handle radius.</td></tr>
+    <tr><td><code>--jb-range-input-handle-size-xs</code></td><td>Handle radius for the extra-small size.</td></tr>
+    <tr><td><code>--jb-range-input-handle-size-sm</code></td><td>Handle radius for the small size.</td></tr>
+    <tr><td><code>--jb-range-input-handle-size-lg</code></td><td>Handle radius for the large size.</td></tr>
+    <tr><td><code>--jb-range-input-handle-size-xl</code></td><td>Handle radius for the extra-large size.</td></tr>
+    <tr><td><code>--jb-range-input-label-margin</code></td><td>Label margin.</td></tr>
+    <tr><td><code>--jb-range-input-label-font-size</code></td><td>Base label font size.</td></tr>
+    <tr><td><code>--jb-range-input-label-font-size-xs</code></td><td>Label font size for the extra-small size.</td></tr>
+    <tr><td><code>--jb-range-input-label-font-size-sm</code></td><td>Label font size for the small size.</td></tr>
+    <tr><td><code>--jb-range-input-label-font-size-lg</code></td><td>Label font size for the large size.</td></tr>
+    <tr><td><code>--jb-range-input-label-font-size-xl</code></td><td>Label font size for the extra-large size.</td></tr>
+    <tr><td><code>--jb-range-input-tick-label-font-size</code></td><td>Base tick-label font size.</td></tr>
+    <tr><td><code>--jb-range-input-tick-label-font-size-xs</code></td><td>Tick-label font size for the extra-small size.</td></tr>
+    <tr><td><code>--jb-range-input-tick-label-font-size-sm</code></td><td>Tick-label font size for the small size.</td></tr>
+    <tr><td><code>--jb-range-input-tick-label-font-size-lg</code></td><td>Tick-label font size for the large size.</td></tr>
+    <tr><td><code>--jb-range-input-tick-label-font-size-xl</code></td><td>Tick-label font size for the extra-large size.</td></tr>
+    <tr><td><code>--jb-range-input-tick-label-line-height</code></td><td>Tick-label line height.</td></tr>
+    <tr><td><code>--jb-range-input-tick-label-gap</code></td><td>Space between ticks and labels.</td></tr>
+    <tr><td><code>--jb-range-input-message-font-size</code></td><td>Base helper or error text size.</td></tr>
+    <tr><td><code>--jb-range-input-message-font-size-xs</code></td><td>Message font size for the extra-small size.</td></tr>
+    <tr><td><code>--jb-range-input-message-font-size-sm</code></td><td>Message font size for the small size.</td></tr>
+    <tr><td><code>--jb-range-input-message-font-size-lg</code></td><td>Message font size for the large size.</td></tr>
+    <tr><td><code>--jb-range-input-message-font-size-xl</code></td><td>Message font size for the extra-large size.</td></tr>
+    <tr><td><code>--jb-range-input-message-margin</code></td><td>Message margin.</td></tr>
+    <tr><td><code>--jb-range-input-balloon-font-size</code></td><td>Balloon value font size.</td></tr>
+    <tr><td><code>--jb-range-input-balloon-scale</code></td><td>Base balloon scale.</td></tr>
+    <tr><td><code>--jb-range-input-balloon-scale-xs</code></td><td>Balloon scale for the extra-small size.</td></tr>
+    <tr><td><code>--jb-range-input-balloon-scale-sm</code></td><td>Balloon scale for the small size.</td></tr>
+    <tr><td><code>--jb-range-input-balloon-scale-lg</code></td><td>Balloon scale for the large size.</td></tr>
+    <tr><td><code>--jb-range-input-balloon-scale-xl</code></td><td>Balloon scale for the extra-large size.</td></tr>
+    <tr><td><code>--jb-range-input-balloon-hover-offset</code></td><td>Base balloon lift on hover.</td></tr>
+    <tr><td><code>--jb-range-input-balloon-hover-offset-xs</code></td><td>Balloon hover lift for the extra-small size.</td></tr>
+    <tr><td><code>--jb-range-input-balloon-hover-offset-sm</code></td><td>Balloon hover lift for the small size.</td></tr>
+    <tr><td><code>--jb-range-input-balloon-hover-offset-lg</code></td><td>Balloon hover lift for the large size.</td></tr>
+    <tr><td><code>--jb-range-input-balloon-hover-offset-xl</code></td><td>Balloon hover lift for the extra-large size.</td></tr>
+  </tbody>
+</table>
+
+### Colors And States
+
+<table>
+  <thead><tr><th>Variable</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td><code>--jb-range-input-color</code></td><td>Base component accent color.</td></tr>
+    <tr><td><code>--jb-range-input-line-color</code></td><td>Inactive track color.</td></tr>
+    <tr><td><code>--jb-range-input-active-line-color</code></td><td>Active track color.</td></tr>
+    <tr><td><code>--jb-range-input-tick-color</code></td><td>Major tick color.</td></tr>
+    <tr><td><code>--jb-range-input-minor-tick-color</code></td><td>Minor tick color.</td></tr>
+    <tr><td><code>--jb-range-input-tick-label-color</code></td><td>Tick-label text color.</td></tr>
+    <tr><td><code>--jb-range-input-handle-color</code></td><td>Handle color and keyboard focus outline.</td></tr>
+    <tr><td><code>--jb-range-input-balloon-color</code></td><td>Balloon shape color.</td></tr>
+    <tr><td><code>--jb-range-input-balloon-text-color</code></td><td>Balloon value color.</td></tr>
+    <tr><td><code>--jb-range-input-label-color</code></td><td>Label color.</td></tr>
+    <tr><td><code>--jb-range-input-message-color</code></td><td>Helper message color.</td></tr>
+    <tr><td><code>--jb-range-input-message-color-error</code></td><td>Validation message color.</td></tr>
+    <tr><td><code>--jb-range-input-color-disabled</code></td><td>Disabled base accent color.</td></tr>
+    <tr><td><code>--jb-range-input-line-color-disabled</code></td><td>Disabled inactive track color.</td></tr>
+    <tr><td><code>--jb-range-input-active-line-color-disabled</code></td><td>Disabled active track color.</td></tr>
+    <tr><td><code>--jb-range-input-tick-color-disabled</code></td><td>Disabled major tick color.</td></tr>
+    <tr><td><code>--jb-range-input-minor-tick-color-disabled</code></td><td>Disabled minor tick color.</td></tr>
+    <tr><td><code>--jb-range-input-tick-label-color-disabled</code></td><td>Disabled tick-label color.</td></tr>
+    <tr><td><code>--jb-range-input-handle-color-disabled</code></td><td>Disabled handle color.</td></tr>
+    <tr><td><code>--jb-range-input-balloon-color-disabled</code></td><td>Disabled balloon color.</td></tr>
+    <tr><td><code>--jb-range-input-balloon-text-color-disabled</code></td><td>Disabled balloon value color.</td></tr>
+  </tbody>
+</table>
+
+### Other
+
+<table>
+  <thead><tr><th>Variable</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td><code>--jb-range-input-line-dash-array</code></td><td>Inactive track SVG dash pattern.</td></tr>
+    <tr><td><code>--jb-range-input-active-line-dash-array</code></td><td>Active track SVG dash pattern.</td></tr>
+    <tr><td><code>--jb-range-input-label-font-weight</code></td><td>Label font weight.</td></tr>
+    <tr><td><code>--jb-range-input-message-box-display</code></td><td>Message container display value.</td></tr>
+  </tbody>
+</table>
+
+## Style Recipes
+
+### Carbon
+<Story of={StyleStories.Carbon} />
+<Source of={StyleStories.Carbon} />
+Shared style:
+<Source code={carbonThemeCss} language="css" />
+Range input style:
+<Source code={carbonRangeInputCss} language="css" />
+
+### Aurora
+<Story of={StyleStories.Aurora} />
+<Source of={StyleStories.Aurora} />
+Shared style:
+<Source code={auroraThemeCss} language="css" />
+Range input style:
+<Source code={auroraRangeInputCss} language="css" />
+
+### Forest
+<Story of={StyleStories.Forest} />
+<Source of={StyleStories.Forest} />
+Shared style:
+<Source code={forestThemeCss} language="css" />
+Range input style:
+<Source code={forestRangeInputCss} language="css" />
+
+### Sunset
+<Story of={StyleStories.Sunset} />
+<Source of={StyleStories.Sunset} />
+Shared style:
+<Source code={sunsetThemeCss} language="css" />
+Range input style:
+<Source code={sunsetRangeInputCss} language="css" />
+
+### Porcelain
+<Story of={StyleStories.Porcelain} />
+<Source of={StyleStories.Porcelain} />
+Shared style:
+<Source code={porcelainThemeCss} language="css" />
+Range input style:
+<Source code={porcelainRangeInputCss} language="css" />
+
+### Candy
+<Story of={StyleStories.Candy} />
+<Source of={StyleStories.Candy} />
+Shared style:
+<Source code={candyThemeCss} language="css" />
+Range input style:
+<Source code={candyRangeInputCss} language="css" />
+
+### Terminal
+<Story of={StyleStories.Terminal} />
+<Source of={StyleStories.Terminal} />
+Shared style:
+<Source code={terminalThemeCss} language="css" />
+Range input style:
+<Source code={terminalRangeInputCss} language="css" />
+
+### Material
+<Story of={StyleStories.Material} />
+<Source of={StyleStories.Material} />
+Shared style:
+<Source code={materialThemeCss} language="css" />
+Range input style:
+<Source code={materialRangeInputCss} language="css" />
+
+### Fluent
+<Story of={StyleStories.Fluent} />
+<Source of={StyleStories.Fluent} />
+Shared style:
+<Source code={fluentThemeCss} language="css" />
+Range input style:
+<Source code={fluentRangeInputCss} language="css" />
+
+### Bootstrap
+<Story of={StyleStories.Bootstrap} />
+<Source of={StyleStories.Bootstrap} />
+Shared style:
+<Source code={bootstrapThemeCss} language="css" />
+Range input style:
+<Source code={bootstrapRangeInputCss} language="css" />
+
+### Cupertino
+<Story of={StyleStories.Cupertino} />
+<Source of={StyleStories.Cupertino} />
+Shared style:
+<Source code={cupertinoThemeCss} language="css" />
+Range input style:
+<Source code={cupertinoRangeInputCss} language="css" />
+
+### Ant Design
+<Story of={StyleStories.AntDesign} />
+<Source of={StyleStories.AntDesign} />
+Shared style:
+<Source code={antDesignThemeCss} language="css" />
+Range input style:
+<Source code={antDesignRangeInputCss} language="css" />
+
+## Theme File Pattern
+
+Use [Theme Colors](../../jb-core/theme/stories/colors.mdx) and [Theme Sizes](../../jb-core/theme/stories/sizes.mdx) as the common design-token guides. Shared theme-pack values belong in [`docs/styles`](https://github.com/javadbat/design-system/tree/main/docs/styles), while range-input-specific CSS belongs in [`modules/jb-range-input/stories/styles`](https://github.com/javadbat/design-system/tree/main/modules/jb-range-input/stories/styles).
+
+```css
+/* docs/styles/carbon.css */
+.theme-name-style {
+  /* shared design-system variables */
+}
+
+/* modules/jb-range-input/stories/styles/style-carbon.css */
+jb-range-input.theme-name-style {
+  /* range-input-specific variables and official parts */
+}
+```

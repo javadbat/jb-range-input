@@ -20,6 +20,7 @@ const meta = {
     max: 10,
     step: 1,
     tickStep: 1,
+    startPoint: 0,
   },
   argTypes: {
     label: { control: "text" },
@@ -27,6 +28,7 @@ const meta = {
     max: { control: "number" },
     step: { control: "number" },
     tickStep: { control: "number" },
+    startPoint: { control: "number" },
     minorTickStep: { control: "number" },
     showTickLabels: { control: "boolean" },
     disableBalloonRotation: { control: "boolean" },
@@ -53,6 +55,30 @@ export const Normal: Story = {
     expect(range.getAttribute("aria-labelledby")).toBe("range-label");
     label.click();
     expect(rangeInput.shadowRoot!.activeElement).toBe(firstHandle);
+  },
+};
+
+export const StartPoint: Story = {
+  name: "Start Point",
+  args: {
+    min: -10,
+    max: 20,
+    step: 5,
+    startPoint: -5,
+    value: 10,
+  },
+  play: async ({ canvasElement }) => {
+    const rangeInput = canvasElement.querySelector<JBRangeInputWebComponent>("jb-range-input")!;
+    const line = rangeInput.shadowRoot!.querySelector<SVGLineElement>("[part='range-active-line']")!;
+    const track = rangeInput.shadowRoot!.querySelector<SVGLineElement>("[part='range-line']")!;
+
+    await waitFor(() => expect(rangeInput.getAttribute("start-point")).toBe("-5"));
+    expect(rangeInput.value).toBe(10);
+
+    const trackStart = Number(track.getAttribute("x1"));
+    const trackEnd = Number(track.getAttribute("x2"));
+    const expectedStart = trackStart + ((-5 - -10) / (20 - -10)) * (trackEnd - trackStart);
+    expect(Number(line.getAttribute("x1"))).toBeCloseTo(expectedStart, 5);
   },
 };
 

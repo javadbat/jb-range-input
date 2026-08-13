@@ -1,6 +1,6 @@
 {
   "name": "jb-range-input",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Range input web component",
   "type": "module",
   "author": {
@@ -8,6 +8,13 @@
     "email": "javadbat@gmail.com"
   },
   "license": "MIT",
+  "keywords":[
+    "jb",
+    "jb-range-input",
+    "range input",
+    "slider",
+    "input"
+  ],
   "files": [
     "LICENSE",
     "README.md",

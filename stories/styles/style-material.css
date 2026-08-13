@@ -1,0 +1,17 @@
+jb-range-input.material-style {
+  --jb-range-input-line-color: var(--jb-surface-container-highest);
+  --jb-range-input-active-line-color: var(--jb-primary);
+  --jb-range-input-tick-color: var(--jb-outline);
+  --jb-range-input-minor-tick-color: var(--jb-outline-variant);
+  --jb-range-input-handle-color: var(--jb-primary);
+  --jb-range-input-balloon-color: var(--jb-primary);
+  --jb-range-input-balloon-text-color: var(--jb-on-primary);
+  --jb-range-input-line-width: 4;
+  --jb-range-input-active-line-width: 4;
+  --jb-range-input-handle-size: 0.625rem;
+  --jb-range-input-line-dash-array: 1 0;
+}
+
+jb-range-input.material-style::part(range-handles) {
+  filter: drop-shadow(0 0.125rem 0.2rem rgb(0 0 0 / 0.2));
+}

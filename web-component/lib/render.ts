@@ -46,9 +46,10 @@ export function renderHTML(): string {
           <title id="range-title">Range values</title>
           <defs>
             <filter id="range-join-filter" x="-50%" y="-100%" width="200%" height="250%" color-interpolation-filters="sRGB">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"></feGaussianBlur>
-              <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -9" result="joined"></feColorMatrix>
-              <feBlend in="SourceGraphic" in2="joined"></feBlend>
+              <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur-sm"></feGaussianBlur>
+              <feColorMatrix in="blur-sm" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 14 -6" result="goo"></feColorMatrix>
+              <feMorphology in="goo" operator="dilate" radius="1.25" result="goo-expanded"></feMorphology>
+              <feComposite in="goo-expanded" in2="SourceGraphic" operator="over"></feComposite>
             </filter>
           </defs>
           <line class="range-line" y1="32" y2="32" part="range-line"></line>
@@ -115,6 +116,7 @@ export function renderRange(
   showTickLabels: boolean,
   tickLabelFormatter: (value: number) => string,
   value: RangeInputValue,
+  startPoint: number,
   width: number,
 ): void {
   const layout = getRangeLayout(elements, width);
@@ -133,7 +135,7 @@ export function renderRange(
     layout,
   });
   renderHandles(elements, value, min, max, step, layout);
-  updateActiveLine(elements, layout.edgePadding);
+  updateActiveLine(elements, layout, min, max, startPoint);
 }
 
 type RangeLayout = {
@@ -301,11 +303,12 @@ function createTick(value: number, x: number, centerY: number, height: number, l
   return tick;
 }
 
-function updateActiveLine(elements: RangeElements, rangeStart: number): void {
+function updateActiveLine(elements: RangeElements, layout: RangeLayout | number, min?: number, max?: number, startPoint?: number): void {
   const firstHandle = elements.handles.children[0] as SVGCircleElement | undefined;
   const secondHandle = elements.handles.children[1] as SVGCircleElement | undefined;
-  const firstX = firstHandle?.getAttribute("cx") ?? String(rangeStart);
-  elements.activeLine.setAttribute("x1", secondHandle ? firstX : String(rangeStart));
+  const firstX = firstHandle?.getAttribute("cx") ?? String(typeof layout === "number" ? layout : layout.edgePadding);
+  const startX = typeof layout === "number" ? (elements.activeLine.getAttribute("x1") ?? String(layout)) : String(valueToX(startPoint!, min!, max!, layout));
+  elements.activeLine.setAttribute("x1", secondHandle ? firstX : startX);
   elements.activeLine.setAttribute("x2", secondHandle?.getAttribute("cx") ?? firstX);
 }
 

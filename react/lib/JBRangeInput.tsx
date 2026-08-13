@@ -18,6 +18,7 @@ export type JBRangeInputProps = PropsWithChildren<
     size?: SizeVariants;
     mode?: RangeInputMode;
     value?: RangeInputValue;
+    startPoint?: number;
     initialValue?: RangeInputValue;
     label?: string;
     name?: string;
@@ -32,13 +33,18 @@ export const JBRangeInput = React.forwardRef<JBRangeInputWebComponent, JBRangeIn
   const element = React.useRef<JBRangeInputWebComponent>(null);
   useImperativeHandle(ref, () => element.current!, []);
 
-  const { value, initialValue, tickLabelFormatter, children, ...otherProps } = props;
+  const { value, initialValue, startPoint, tickLabelFormatter, children, ...otherProps } = props;
   useEffect(() => {
     if (value !== undefined && element.current) element.current.value = value;
   }, [value]);
   useEffect(() => {
     if (initialValue !== undefined && element.current) element.current.initialValue = initialValue;
   }, [initialValue]);
+  useEffect(() => {
+    if (startPoint !== undefined && element.current) {
+      (element.current as JBRangeInputWebComponent & { startPoint: number }).startPoint = startPoint;
+    }
+  }, [startPoint]);
   useEffect(() => {
     if (element.current) element.current.tickLabelFormatter = tickLabelFormatter ?? (tickValue => String(tickValue));
   }, [tickLabelFormatter]);

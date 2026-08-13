@@ -5,7 +5,7 @@
 [![NPM Version](https://img.shields.io/npm/v/jb-range-input)](https://www.npmjs.com/package/jb-range-input)
 ![GitHub Created At](https://img.shields.io/github/created-at/javadbat/jb-range-input)
 
-`jb-range-input` is a form-associated, discrete range input web component. It can select one numeric value or a start/end pair.
+`jb-range-input` is a form-associated, discrete range input web component. It can select one numeric value or a start/end pair; the [interactive overview](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput--normal) shows the default behavior.
 
 - Supports single-value and two-handle range modes.
 - Supports integer and decimal steps.
@@ -19,21 +19,19 @@
 
 ## When to use
 
-Use `jb-range-input` when users should choose a value or interval from a known numeric scale, such as volume, price, score, duration, or filter boundaries.
+Use `jb-range-input` when users should choose a value or interval from a known numeric scale, such as volume, price, score, duration, or filter boundaries; the [range example](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput--range) shows interval selection.
 
 Use a number input when users need to enter an exact value directly or the available range is too large to navigate comfortably with a slider.
 
 ## Demo
 
-- [Storybook overview](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput--normal)
-- [Range mode](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput--range)
-- [Decimal step](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput--decimal-step)
+- [Storybook](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput--normal)
 
 ## Using with React
 
 <a href="https://github.com/javadbat/jb-range-input/tree/main/react" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/React.js-jb--range--input%2Freact-000.svg?logo=react&logoColor=%2361DAFB" height="30" /></a>
 
-See the [React documentation](./react/README.md).
+See the [React documentation](./react/README.md) and its [interactive story](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput-react-readme--docs).
 
 ## Installation
 
@@ -49,6 +47,8 @@ import "jb-range-input";
 <jb-range-input label="Range value" min="0" max="10" value="4"></jb-range-input>
 ```
 
+The [normal example](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput--normal) uses the same basic setup.
+
 ### CDN
 
 ```html
@@ -57,13 +57,18 @@ import "jb-range-input";
 
 ## API reference
 
+The [API overview](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput--normal) demonstrates the main attributes and properties together.
+
 ### Attributes
+
+The [attribute controls](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput--normal) show these options in Storybook.
 
 | name | type | default | description |
 | --- | --- | --- | --- |
 | `label` | `string` | `""` | Visible label text and accessible aria label. |
-| `value` | `number \| "start,end"` | `0` | Selected value. In range mode, use a comma-separated pair such as `"2,8"`. |
+| `value` | `number \| "start,end"` | single/range mode default | Selected value. In range mode, use a comma-separated pair such as `"2,8"`. |
 | `mode` | `"single" \| "range"` | `"single"` | Selects one value or a start/end pair. |
+| `start-point` | `number` | single-mode default | Start of the active line in single mode. Defaults to `0` when zero is within the range, otherwise `min`. Ignored in range mode. |
 | `min` | `number` | `0` | Minimum selectable value. |
 | `max` | `number` | `10` | Maximum selectable value. |
 | `step` | `number` | `1` | Increment used to snap selected values and handle keyboard navigation. |
@@ -80,12 +85,15 @@ import "jb-range-input";
 
 ### Properties
 
+The [controlled range example](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput--controlled-range) demonstrates property updates.
+
 | name | type | readonly | description |
 | --- | --- | --- | --- |
 | `label` | `string` | no | Visible label text and accessible aria label. |
 | `value` | `number \| [number, number]` | no | Current normalized value. Returns a tuple in range mode. |
 | `initialValue` | `number \| [number, number]` | no | Initial and form-reset value. It initializes `value` until the live value becomes dirty. |
 | `mode` | `"single" \| "range"` | no | Current selection mode. |
+| `startPoint` | `number` | no | Start of the active line in single mode. Defaults like the single-mode value and is ignored in range mode. |
 | `min` | `number` | no | Minimum selectable value. |
 | `max` | `number` | no | Maximum selectable value. |
 | `step` | `number` | no | Selectable increment. Non-positive or invalid values normalize to `1`. |
@@ -105,6 +113,8 @@ import "jb-range-input";
 
 ### Methods
 
+The [validation example](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput--with-error) exercises the imperative validity methods.
+
 | name | returns | description |
 | --- | --- | --- |
 | `checkValidity()` | `boolean` | Runs validation without showing the error and dispatches `invalid` when invalid. |
@@ -112,6 +122,8 @@ import "jb-range-input";
 | `clearValidationError()` | `void` | Clears the visible invalid state. |
 
 ### Events
+
+The [form example](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput--in-form) shows the component participating in browser events and submission.
 
 | event | description |
 | --- | --- |
@@ -121,7 +133,7 @@ import "jb-range-input";
 
 ## Single-value mode
 
-Single mode renders one handle and returns a number:
+Single mode renders one handle and returns a number; see the [single-value example](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput--normal) and the [start-point example](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput--start-point):
 
 ```html
 <jb-range-input min="0" max="100" step="5" value="25"></jb-range-input>
@@ -136,7 +148,7 @@ console.log(rangeInput.value); // 40
 
 ## Range mode
 
-Range mode renders two handles. The first value cannot move above the second, and the second cannot move below the first.
+Range mode renders two handles. The first value cannot move above the second, and the second cannot move below the first; the [range story](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput--range) shows the interaction.
 
 When range mode receives one number, that number becomes the upper value and `min` becomes the lower value. When changing from range mode to single mode, the range's upper value is preserved.
 
@@ -156,7 +168,7 @@ console.log(rangeInput.value); // [20, 80]
 
 ## Step and tick marks
 
-`step` controls the values a user can select. `tick-step` controls the visible tick interval and does not affect selection.
+`step` controls the values a user can select. `tick-step` controls the visible tick interval and does not affect selection; compare the [decimal-step example](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput--decimal-step).
 
 ```html
 <jb-range-input
@@ -194,7 +206,7 @@ Values assigned between steps are snapped to the nearest valid step and clamped 
 
 ## Size variants
 
-Use `xs`, `sm`, `md`, `lg`, or `xl`. Omitting `size` uses the `md` styles.
+Use `xs`, `sm`, `md`, `lg`, or `xl`. Omitting `size` uses the `md` styles; the [size variants story](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput--size-variants) compares them.
 The balloon scales by 15 percentage points between adjacent sizes: 70%, 85%, 100%, 115%, and 130% respectively.
 
 ```html
@@ -209,7 +221,7 @@ The balloon tilts subtly based on horizontal drag speed and returns to center wh
 
 ## Forms
 
-`jb-range-input` participates in native forms. Single values are submitted as numeric strings. Range values are submitted as comma-separated strings such as `"20,80"`.
+`jb-range-input` participates in native forms. Single values are submitted as numeric strings. Range values are submitted as comma-separated strings such as `"20,80"`; the [form example](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput--in-form) shows submission and reset.
 
 ```html
 <form id="filters">
@@ -234,7 +246,7 @@ rangeInput.initialValue = [20, 80];
 
 ## Validation
 
-The component uses [`jb-validation`](https://github.com/javadbat/jb-validation). Set the `error` attribute for an external error or configure `validation.list` for custom rules.
+The component uses [`jb-validation`](https://github.com/javadbat/jb-validation). Set the `error` attribute for an external error or configure `validation.list` for custom rules; see the [validation example](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput--with-error).
 
 ```js
 const rangeInput = document.querySelector("jb-range-input");
@@ -253,7 +265,7 @@ Custom validators receive a `number` in single mode or `[number, number]` in ran
 
 ## Keyboard interaction
 
-Focus a handle and use:
+Focus a handle and use the keyboard as shown in the [disabled and interaction stories](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput--disabled):
 
 - `ArrowLeft` or `ArrowDown` to subtract one `step`.
 - `ArrowRight` or `ArrowUp` to add one `step`.
@@ -262,7 +274,11 @@ Keyboard changes remain constrained to `min`, `max`, and the other handle in ran
 
 ## CSS parts and variables
 
+The [styling gallery](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput-style--gallery) demonstrates the available theme recipes and customization points.
+
 ### Parts
+
+The [styling gallery](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput-style--gallery) shows the exposed parts in context.
 
 | part | description |
 | --- | --- |
@@ -289,6 +305,8 @@ Keyboard changes remain constrained to `min`, `max`, and the other handle in ran
 
 ### Custom states
 
+The [disabled and validation stories](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput--disabled) show the component states.
+
 | state | description |
 | --- | --- |
 | `disabled` | Applied when interaction is disabled. |
@@ -296,6 +314,8 @@ Keyboard changes remain constrained to `min`, `max`, and the other handle in ran
 | `invalid` | Applied while a validation error is visible. |
 
 ### CSS variables
+
+The [theme gallery](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput-style--gallery) demonstrates these variables across several visual styles.
 
 | variable | default | description |
 | --- | --- | --- |
@@ -360,21 +380,21 @@ jb-range-input:state(invalid)::part(range-handle) {
 
 ## Accessibility notes
 
-- Each handle has `role="slider"`, keyboard focus, and `aria-valuemin`, `aria-valuemax`, `aria-valuenow`, and `aria-valuetext`.
+- Each handle has `role="slider"`, keyboard focus, and `aria-valuemin`, `aria-valuemax`, `aria-valuenow`, and `aria-valuetext`, as shown in the [normal accessibility example](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput--normal).
 - The `label` attribute renders a visible label, provides the component's accessible label, and focuses the first handle when clicked.
 - Disabled handles are removed from the tab order and pointer/keyboard interaction is blocked.
 - Required, disabled, and invalid states are exposed through ARIA and custom states.
 
 ## Related docs
 
-- See [`jb-range-input/react`](./react/README.md) for React usage.
+- See [`jb-range-input/react`](./react/README.md) for React usage and the [React story](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput-react-readme--docs).
 - See [`jb-validation`](https://github.com/javadbat/jb-validation) for custom validation rules.
 - See [All JB Design System components](https://javadbat.github.io/design-system/) for more components.
 - Use the [Contribution Guide](https://github.com/javadbat/design-system/blob/main/docs/contribution-guide.md) when contributing.
 
 ## AI agent notes
 
-- Import `jb-range-input` once before rendering `<jb-range-input>`.
+- Import `jb-range-input` once before rendering `<jb-range-input>`; the [overview story](https://javadbat.github.io/design-system/?path=/story/components-form-elements-jbrangeinput--normal) is a compact reference.
 - Use a number in single mode and a `[number, number]` tuple in range mode.
 - The HTML `value` attribute uses a comma-separated string in range mode.
 - `step` controls selectable values; `tick-step` controls tick rendering only.

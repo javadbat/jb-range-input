@@ -21,6 +21,7 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
       "disable-balloon-rotation",
       "mode",
       "value",
+      "start-point",
       "disabled",
       "required",
       "message",
@@ -39,6 +40,8 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
   #mode: RangeInputMode = "single";
   #value: RangeInputValue = 0;
   #initialValue: RangeInputValue = 0;
+  #startPoint = 0;
+  #hasStartPoint = false;
   #isDirty = false;
   #disabled = false;
   #required = false;
@@ -225,14 +228,14 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
 
   set mode(value: RangeInputMode) {
     this.#mode = value === "range" ? "range" : "single";
-    this.#value = this.#normalizeValue(this.#value);
+    this.#value = this.#hasValue ? this.#normalizeValue(this.#value) : this.#parseValueAttribute(null);
     this.#isReflectingMode = true;
     try {
       this.#reflectAttribute("mode", this.#mode);
     } finally {
       this.#isReflectingMode = false;
     }
-    this.#reflectValueAttribute();
+    if (this.#hasValue || this.#hasConnected) this.#reflectValueAttribute();
     this.#setFormValue();
     this.#render(this.getBoundingClientRect().width);
   }
@@ -245,6 +248,17 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
     this.#hasValue = true;
     this.#isDirty = true;
     this.#setValue(value);
+  }
+
+  get startPoint(): number {
+    return this.#startPoint;
+  }
+
+  set startPoint(value: number) {
+    this.#hasStartPoint = true;
+    this.#startPoint = this.#normalizeStartPoint(value);
+    this.#reflectAttribute("start-point", String(this.#startPoint));
+    this.#render(this.getBoundingClientRect().width);
   }
 
   #elements: RangeElements;
@@ -306,6 +320,8 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
       this.#mode = this.getAttribute("mode") === "range" ? "range" : "single";
       this.#hasValue = this.hasAttribute("value");
       this.#value = this.#parseValueAttribute(this.getAttribute("value"));
+      this.#hasStartPoint = this.hasAttribute("start-point");
+      this.#startPoint = this.#parseStartPointAttribute(this.getAttribute("start-point"));
       if (!this.#isDirty) this.#initialValue = this.#cloneValue(this.#value);
       this.disabled = this.hasAttribute("disabled");
       this.required = this.hasAttribute("required");
@@ -366,6 +382,10 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
       if (!this.#isDirty) this.#initialValue = this.#cloneValue(this.#value);
       this.#setFormValue();
     }
+    if (name === "start-point") {
+      this.#hasStartPoint = newValue !== null;
+      this.#startPoint = this.#parseStartPointAttribute(newValue);
+    }
     if (name === "disabled") {
       this.disabled = newValue !== null;
     }
@@ -383,6 +403,7 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
     }
     if (name === "min" || name === "max" || name === "step") {
       this.#value = this.#normalizeValue(this.#value);
+      this.#startPoint = this.#hasStartPoint ? this.#normalizeStartPoint(this.#startPoint) : this.#getSingleDefaultValue();
       this.#reflectValueAttribute();
       this.#setFormValue();
     }
@@ -412,16 +433,34 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
     return clamp(Array.isArray(value) ? value[1] : value);
   }
 
+  #getSingleDefaultValue(): number {
+    const defaultValue = this.#min < 0 && this.#max >= 0 ? 0 : this.#min;
+    return snapValueToStep(defaultValue, this.#min, this.#max, this.#step);
+  }
+
+  #normalizeStartPoint(value: number): number {
+    return snapValueToStep(this.#normalizeNumber(value, this.#getSingleDefaultValue()), this.#min, this.#max, this.#step);
+  }
+
+  #parseStartPointAttribute(value: string | null): number {
+    return this.#normalizeStartPoint(parseNumberAttribute(value, this.#getSingleDefaultValue()));
+  }
+
   #parseValueAttribute(value: string | null): RangeInputValue {
     if (this.#mode === "range") {
+      // A range-mode input without an explicit value spans the complete range by default.
+      if (!value?.trim()) return this.#normalizeValue([this.#min, this.#max]);
       const [start, end] = value?.split(",") ?? [];
       if (end === undefined) {
         return this.#normalizeValue(parseNumberAttribute(start ?? null, this.#min));
       }
       return this.#normalizeValue([parseNumberAttribute(start ?? null, this.#min), parseNumberAttribute(end ?? null, this.#max)]);
     }
+    // In single mode, prefer zero when it is inside a negative-to-positive range;
+    // otherwise the default is the minimum value.
+    const defaultValue = this.#getSingleDefaultValue();
     const singleValue = value?.includes(",") ? value.split(",")[1] : value;
-    return this.#normalizeValue(parseNumberAttribute(singleValue ?? null, this.#min));
+    return this.#normalizeValue(parseNumberAttribute(singleValue ?? null, defaultValue));
   }
 
   #reflectValueAttribute(): void {
@@ -465,7 +504,19 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
   }
 
   #render(width: number): void {
-    renderRange(this.#elements, this.min, this.max, this.step, this.tickStep, this.minorTickStep, this.showTickLabels, this.tickLabelFormatter, this.#value, width);
+    renderRange(
+      this.#elements,
+      this.min,
+      this.max,
+      this.step,
+      this.tickStep,
+      this.minorTickStep,
+      this.showTickLabels,
+      this.tickLabelFormatter,
+      this.#value,
+      this.#startPoint,
+      width,
+    );
     for (const handle of this.#elements.handles.children) {
       handle.setAttribute("tabindex", this.#disabled ? "-1" : "0");
     }

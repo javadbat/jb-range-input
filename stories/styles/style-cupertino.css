@@ -1,0 +1,17 @@
+jb-range-input.cupertino-style {
+  --jb-range-input-line-color: #e9e9eb;
+  --jb-range-input-active-line-color: #007aff;
+  --jb-range-input-tick-color: #8e8e93;
+  --jb-range-input-minor-tick-color: #c7c7cc;
+  --jb-range-input-handle-color: #ffffff;
+  --jb-range-input-balloon-color: #007aff;
+  --jb-range-input-balloon-text-color: #ffffff;
+  --jb-range-input-line-width: 8;
+  --jb-range-input-active-line-width: 8;
+  --jb-range-input-handle-size: 0.875rem;
+  --jb-range-input-line-dash-array: 1 0;
+}
+
+jb-range-input.cupertino-style::part(range-handles) {
+  filter: drop-shadow(0 0.125rem 0.2rem rgb(0 0 0 / 0.28));
+}

@@ -1,0 +1,17 @@
+jb-range-input.forest-style {
+  --jb-range-input-line-color: #6f8f69;
+  --jb-range-input-active-line-color: #f6d95f;
+  --jb-range-input-tick-color: #f6d95f;
+  --jb-range-input-minor-tick-color: #6f8f69;
+  --jb-range-input-handle-color: #fff8d2;
+  --jb-range-input-balloon-color: #173f2e;
+  --jb-range-input-balloon-text-color: #fff8d2;
+  --jb-range-input-line-width: 5;
+  --jb-range-input-active-line-width: 7;
+  --jb-range-input-handle-size: 0.75rem;
+  --jb-range-input-line-dash-array: 1 0;
+}
+
+jb-range-input.forest-style::part(range) {
+  filter: drop-shadow(0 0.25rem 0.35rem rgb(23 63 46 / 0.3));
+}
