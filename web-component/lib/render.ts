@@ -1,41 +1,8 @@
-import CSS from "./jb-range-input.css";
-import VariablesCSS from "./variables.css";
 import type { RangeInputValue } from "./types.js";
-import { normalizeStep, roundForSteps, snapValueToStep } from "./math.js";
+import { normalizeStep } from "./math.js";
+import { getRangeLayout, getTickCount, getTickValue, valueToX, type RangeElements, type RangeLayout } from "./utils.js";
 
 const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
-const MAX_BALLOON_ROTATION = 15;
-const BALLOON_ROTATION_SPEED_FACTOR = 8;
-const BALLOON_ROTATION_RESET_DELAY = 80;
-
-export type RangeElements = {
-  root: HTMLDivElement;
-  label: HTMLLabelElement;
-  svg: SVGSVGElement;
-  line: SVGLineElement;
-  activeLine: SVGLineElement;
-  ticks: SVGGElement;
-  handles: SVGGElement;
-  balloon: SVGGElement;
-  balloonLabel: SVGGElement;
-  balloonValue: SVGTextElement;
-  tickHeightProbe: HTMLSpanElement;
-  minorTickHeightProbe: HTMLSpanElement;
-  tickLabels: HTMLDivElement;
-  handleSizeProbe: HTMLSpanElement;
-  messageBox: HTMLDivElement;
-};
-
-export type RangeInteractionOptions = {
-  getMin: () => number;
-  getMax: () => number;
-  getStep: () => number;
-  getDisabled: () => boolean;
-  getBalloonRotationDisabled: () => boolean;
-  onInput: (handleIndex: number, value: number) => number;
-  onChange: () => void;
-  onCancel: () => void;
-};
 
 export function renderHTML(): string {
   return /* html */ `
@@ -81,31 +48,6 @@ export function renderHTML(): string {
   `;
 }
 
-export function initializeDOM(host: HTMLElement): RangeElements {
-  const shadowRoot = host.attachShadow({ mode: "open" });
-  const template = document.createElement("template");
-  template.innerHTML = `<style>${CSS} ${VariablesCSS}</style>${renderHTML()}`;
-  shadowRoot.appendChild(template.content.cloneNode(true));
-
-  return {
-    root: shadowRoot.querySelector<HTMLDivElement>(".jb-range-input-web-component")!,
-    label: shadowRoot.querySelector<HTMLLabelElement>(".label")!,
-    svg: shadowRoot.querySelector<SVGSVGElement>(".range-svg")!,
-    line: shadowRoot.querySelector<SVGLineElement>(".range-line")!,
-    activeLine: shadowRoot.querySelector<SVGLineElement>(".range-active-line")!,
-    ticks: shadowRoot.querySelector<SVGGElement>(".range-ticks")!,
-    handles: shadowRoot.querySelector<SVGGElement>(".range-handles")!,
-    balloon: shadowRoot.querySelector<SVGGElement>(".range-balloon")!,
-    balloonLabel: shadowRoot.querySelector<SVGGElement>(".range-balloon-label")!,
-    balloonValue: shadowRoot.querySelector<SVGTextElement>(".range-balloon-value")!,
-    tickHeightProbe: shadowRoot.querySelector<HTMLSpanElement>(".tick-height-probe")!,
-    minorTickHeightProbe: shadowRoot.querySelector<HTMLSpanElement>(".minor-tick-height-probe")!,
-    tickLabels: shadowRoot.querySelector<HTMLDivElement>(".tick-labels")!,
-    handleSizeProbe: shadowRoot.querySelector<HTMLSpanElement>(".handle-size-probe")!,
-    messageBox: shadowRoot.querySelector<HTMLDivElement>(".message-box")!,
-  };
-}
-
 export function renderRange(
   elements: RangeElements,
   min: number,
@@ -138,16 +80,6 @@ export function renderRange(
   updateActiveLine(elements, layout, min, max, startPoint);
 }
 
-type RangeLayout = {
-  width: number;
-  centerY: number;
-  tickHeight: number;
-  minorTickHeight: number;
-  handleSize: number;
-  edgePadding: number;
-  drawableWidth: number;
-};
-
 type TickRenderOptions = {
   min: number;
   max: number;
@@ -157,17 +89,6 @@ type TickRenderOptions = {
   tickLabelFormatter: (value: number) => string;
   layout: RangeLayout;
 };
-
-function getRangeLayout(elements: RangeElements, width: number): RangeLayout {
-  const safeWidth = Math.max(1, width);
-  const centerY = elements.svg.clientHeight / 2 || 32;
-  const tickHeight = elements.tickHeightProbe.getBoundingClientRect().height || 12;
-  const minorTickHeight = elements.minorTickHeightProbe.getBoundingClientRect().height || 6;
-  const handleSize = elements.handleSizeProbe.getBoundingClientRect().height || 8;
-  const edgePadding = Math.min(20, safeWidth * 0.05);
-  const drawableWidth = Math.max(0, safeWidth - edgePadding * 2);
-  return { width: safeWidth, centerY, tickHeight, minorTickHeight, handleSize, edgePadding, drawableWidth };
-}
 
 function renderTrack(elements: RangeElements, layout: RangeLayout): void {
   const { width, centerY, edgePadding } = layout;
@@ -230,19 +151,6 @@ function renderMajorTicks(
   return labelFragment;
 }
 
-function getTickCount(min: number, max: number, tickStep: number): number {
-  return Math.floor((max - min) / tickStep + 1e-10) + 1;
-}
-
-function getTickValue(min: number, max: number, tickStep: number, index: number): number {
-  return roundForSteps(min + index * tickStep, min, max, tickStep);
-}
-
-function valueToX(value: number, min: number, max: number, layout: RangeLayout): number {
-  const ratio = max === min ? 0.5 : (value - min) / (max - min);
-  return layout.edgePadding + ratio * layout.drawableWidth;
-}
-
 function createTickLabel(value: number, x: number, isStart: boolean, isEnd: boolean, formatter: (value: number) => string): HTMLSpanElement {
   const label = document.createElement("span");
   label.classList.add("tick-label");
@@ -303,238 +211,11 @@ function createTick(value: number, x: number, centerY: number, height: number, l
   return tick;
 }
 
-function updateActiveLine(elements: RangeElements, layout: RangeLayout | number, min?: number, max?: number, startPoint?: number): void {
+export function updateActiveLine(elements: RangeElements, layout: RangeLayout | number, min?: number, max?: number, startPoint?: number): void {
   const firstHandle = elements.handles.children[0] as SVGCircleElement | undefined;
   const secondHandle = elements.handles.children[1] as SVGCircleElement | undefined;
   const firstX = firstHandle?.getAttribute("cx") ?? String(typeof layout === "number" ? layout : layout.edgePadding);
   const startX = typeof layout === "number" ? (elements.activeLine.getAttribute("x1") ?? String(layout)) : String(valueToX(startPoint!, min!, max!, layout));
   elements.activeLine.setAttribute("x1", secondHandle ? firstX : startX);
   elements.activeLine.setAttribute("x2", secondHandle?.getAttribute("cx") ?? firstX);
-}
-
-export function registerRangeInteractions(elements: RangeElements, options: RangeInteractionOptions, signal: AbortSignal): void {
-  const state: RangeInteractionState = {
-    activeHandleIndex: null,
-    animationFrame: null,
-    pendingPointerEvent: null,
-    lastPointerX: null,
-    lastPointerTimestamp: null,
-    rotationResetTimer: null,
-  };
-  registerPointerInteractions(elements, options, state, signal);
-  registerHoverInteractions(elements, options, state, signal);
-  registerKeyboardInteractions(elements, options, signal);
-  signal.addEventListener("abort", () => resetPointerInteraction(elements, state), { once: true });
-}
-
-type RangeInteractionState = {
-  activeHandleIndex: number | null;
-  animationFrame: number | null;
-  pendingPointerEvent: PointerEvent | null;
-  lastPointerX: number | null;
-  lastPointerTimestamp: number | null;
-  rotationResetTimer: number | null;
-};
-
-function registerPointerInteractions(elements: RangeElements, options: RangeInteractionOptions, state: RangeInteractionState, signal: AbortSignal): void {
-  elements.svg.addEventListener(
-    "pointerdown",
-    event => {
-      if (options.getDisabled()) return;
-      const handle = getHandle(event.target);
-      if (!handle) return;
-      state.activeHandleIndex = Number(handle.dataset.handleIndex);
-      startBalloonMotion(elements, state, event);
-      elements.svg.classList.add("--dragging");
-      elements.svg.setPointerCapture(event.pointerId);
-      previewPointerPosition(elements, options, event, state.activeHandleIndex);
-      event.preventDefault();
-    },
-    { signal },
-  );
-  elements.svg.addEventListener(
-    "pointermove",
-    event => {
-      if (state.activeHandleIndex === null) return;
-      schedulePointerPreview(elements, options, state, event);
-    },
-    { signal },
-  );
-  elements.svg.addEventListener("pointerup", event => finishPointerInteraction(elements, options, state, event), { signal });
-  elements.svg.addEventListener(
-    "pointercancel",
-    () => {
-      if (state.activeHandleIndex === null) return;
-      resetPointerInteraction(elements, state);
-      options.onCancel();
-    },
-    { signal },
-  );
-}
-
-function registerHoverInteractions(elements: RangeElements, options: RangeInteractionOptions, state: RangeInteractionState, signal: AbortSignal): void {
-  elements.svg.addEventListener(
-    "pointerover",
-    event => {
-      if (event.pointerType === "touch" || options.getDisabled() || state.activeHandleIndex !== null) return;
-      const handle = getHandle(event.target);
-      if (!handle) return;
-      showBalloon(elements, Number(handle.dataset.handleIndex), Number(handle.dataset.value), true);
-    },
-    { signal },
-  );
-  elements.svg.addEventListener(
-    "pointerout",
-    event => {
-      if (state.activeHandleIndex !== null || !getHandle(event.target)) return;
-      hideBalloon(elements);
-    },
-    { signal },
-  );
-}
-
-function registerKeyboardInteractions(elements: RangeElements, options: RangeInteractionOptions, signal: AbortSignal): void {
-  elements.svg.addEventListener(
-    "keydown",
-    event => {
-      if (options.getDisabled()) return;
-      const handle = getHandle(event.target);
-      if (!handle || !["ArrowLeft", "ArrowDown", "ArrowRight", "ArrowUp"].includes(event.key)) return;
-      const direction = event.key === "ArrowLeft" || event.key === "ArrowDown" ? -1 : 1;
-      const handleIndex = Number(handle.dataset.handleIndex);
-      options.onInput(handleIndex, Number(handle.dataset.value) + direction * options.getStep());
-      options.onChange();
-      event.preventDefault();
-    },
-    { signal },
-  );
-}
-
-function getHandle(target: EventTarget | null): SVGCircleElement | null {
-  return target instanceof SVGCircleElement && target.classList.contains("range-handle") ? target : null;
-}
-
-function getPointerPosition(elements: RangeElements, options: RangeInteractionOptions, event: PointerEvent, handleIndex: number): { value: number; x: number } {
-  const bounds = elements.svg.getBoundingClientRect();
-  const min = options.getMin();
-  const max = options.getMax();
-  const step = options.getStep();
-  const edgePadding = Math.min(20, bounds.width * 0.05);
-  const drawableWidth = Math.max(1, bounds.width - edgePadding * 2);
-  const ratio = Math.min(1, Math.max(0, (event.clientX - bounds.left - edgePadding) / drawableWidth));
-  let x = edgePadding + ratio * drawableWidth;
-  if (elements.handles.children.length === 2) {
-    const otherHandle = elements.handles.children[handleIndex === 0 ? 1 : 0] as SVGCircleElement;
-    const otherX = Number(otherHandle.getAttribute("cx"));
-    x = handleIndex === 0 ? Math.min(x, otherX) : Math.max(x, otherX);
-  }
-  const constrainedRatio = (x - edgePadding) / drawableWidth;
-  return { value: snapValueToStep(min + constrainedRatio * (max - min), min, max, step), x };
-}
-
-function previewPointerPosition(elements: RangeElements, options: RangeInteractionOptions, event: PointerEvent, handleIndex: number): number {
-  const handle = elements.handles.children[handleIndex] as SVGCircleElement;
-  const position = getPointerPosition(elements, options, event, handleIndex);
-  handle.setAttribute("cx", String(position.x));
-  handle.setAttribute("data-value", String(position.value));
-  handle.setAttribute("aria-valuenow", String(position.value));
-  handle.setAttribute("aria-valuetext", String(position.value));
-  updateActiveLine(elements, Number(elements.line.getAttribute("x1")));
-  showBalloon(elements, handleIndex, position.value);
-  return position.value;
-}
-
-function schedulePointerPreview(elements: RangeElements, options: RangeInteractionOptions, state: RangeInteractionState, event: PointerEvent): void {
-  state.pendingPointerEvent = event;
-  if (state.animationFrame !== null) return;
-  state.animationFrame = requestAnimationFrame(() => {
-    state.animationFrame = null;
-    if (state.activeHandleIndex !== null && state.pendingPointerEvent) {
-      updateBalloonRotation(elements, options, state, state.pendingPointerEvent);
-      previewPointerPosition(elements, options, state.pendingPointerEvent, state.activeHandleIndex);
-    }
-    state.pendingPointerEvent = null;
-  });
-}
-
-function startBalloonMotion(elements: RangeElements, state: RangeInteractionState, event: PointerEvent): void {
-  resetBalloonRotation(elements, state);
-  state.lastPointerX = event.clientX;
-  state.lastPointerTimestamp = event.timeStamp;
-}
-
-function updateBalloonRotation(elements: RangeElements, options: RangeInteractionOptions, state: RangeInteractionState, event: PointerEvent): void {
-  if (options.getBalloonRotationDisabled()) {
-    resetBalloonRotation(elements, state);
-    return;
-  }
-  if (state.lastPointerX !== null && state.lastPointerTimestamp !== null) {
-    const elapsed = Math.max(1, event.timeStamp - state.lastPointerTimestamp);
-    const velocity = (event.clientX - state.lastPointerX) / elapsed;
-    const rotation = Math.max(-MAX_BALLOON_ROTATION, Math.min(MAX_BALLOON_ROTATION, -velocity * BALLOON_ROTATION_SPEED_FACTOR));
-    setBalloonRotation(elements, rotation);
-  }
-  state.lastPointerX = event.clientX;
-  state.lastPointerTimestamp = event.timeStamp;
-  if (state.rotationResetTimer !== null) window.clearTimeout(state.rotationResetTimer);
-  state.rotationResetTimer = window.setTimeout(() => {
-    state.rotationResetTimer = null;
-    setBalloonRotation(elements, 0);
-  }, BALLOON_ROTATION_RESET_DELAY);
-}
-
-function resetBalloonRotation(elements: RangeElements, state: RangeInteractionState): void {
-  if (state.rotationResetTimer !== null) window.clearTimeout(state.rotationResetTimer);
-  state.rotationResetTimer = null;
-  state.lastPointerX = null;
-  state.lastPointerTimestamp = null;
-  setBalloonRotation(elements, 0);
-}
-
-function setBalloonRotation(elements: RangeElements, rotation: number): void {
-  elements.svg.style.setProperty("--balloon-rotation", `${rotation}deg`);
-}
-
-function finishPointerInteraction(elements: RangeElements, options: RangeInteractionOptions, state: RangeInteractionState, event: PointerEvent): void {
-  if (state.activeHandleIndex === null) return;
-  const handleIndex = state.activeHandleIndex;
-  const value = previewPointerPosition(elements, options, event, handleIndex);
-  resetPointerInteraction(elements, state);
-  options.onInput(handleIndex, value);
-  options.onChange();
-  const handle = elements.handles.children[handleIndex] as SVGCircleElement | undefined;
-  if (event.pointerType !== "touch" && handle && isPointerOverHandle(handle, event)) showBalloon(elements, handleIndex, value, true);
-}
-
-function isPointerOverHandle(handle: SVGCircleElement, event: PointerEvent): boolean {
-  const bounds = handle.getBoundingClientRect();
-  return event.clientX >= bounds.left && event.clientX <= bounds.right && event.clientY >= bounds.top && event.clientY <= bounds.bottom;
-}
-
-function resetPointerInteraction(elements: RangeElements, state: RangeInteractionState): void {
-  state.activeHandleIndex = null;
-  state.pendingPointerEvent = null;
-  if (state.animationFrame !== null) cancelAnimationFrame(state.animationFrame);
-  state.animationFrame = null;
-  resetBalloonRotation(elements, state);
-  elements.svg.classList.remove("--dragging");
-  hideBalloon(elements);
-}
-
-function showBalloon(elements: RangeElements, handleIndex: number, value: number, isHover = false): void {
-  const handle = elements.handles.children[handleIndex] as SVGCircleElement | undefined;
-  if (!handle) return;
-  const transform = `translate(${handle.getAttribute("cx") ?? 0} ${handle.getAttribute("cy") ?? 0})`;
-  elements.balloon.setAttribute("transform", transform);
-  elements.balloonLabel.setAttribute("transform", transform);
-  elements.balloonValue.textContent = String(value);
-  elements.balloon.classList.toggle("--hover", isHover);
-  elements.balloonLabel.classList.toggle("--hover", isHover);
-  elements.balloon.classList.add("--show");
-  elements.balloonLabel.classList.add("--show");
-}
-
-function hideBalloon(elements: RangeElements): void {
-  elements.balloon.classList.remove("--show", "--hover");
-  elements.balloonLabel.classList.remove("--show", "--hover");
 }

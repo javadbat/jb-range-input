@@ -1,4 +1,8 @@
-import { initializeDOM, registerRangeInteractions, renderRange, type RangeElements } from "./render.js";
+import { renderHTML, renderRange } from "./render.js";
+import { RangeInteractionController } from "./interaction-controller.js";
+import type { RangeElements } from "./utils.js";
+import CSS from "./jb-range-input.css";
+import VariablesCSS from "./variables.css";
 import { parseNumberAttribute } from "jb-core";
 import { getRequiredMessage, i18n } from "jb-core/i18n";
 import { registerDefaultVariables } from "jb-core/theme";
@@ -268,33 +272,55 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
   constructor() {
     super();
     if (typeof this.attachInternals === "function") this.#internals = this.attachInternals();
-    this.#elements = initializeDOM(this);
+    this.#elements = this.#initializeDOM();
     this.#resizeObserver = new ResizeObserver(() => {
       this.#render(this.getBoundingClientRect().width);
     });
+  }
+
+  #initializeDOM(): RangeElements {
+    const shadowRoot = this.attachShadow({ mode: "open" });
+    const template = document.createElement("template");
+    template.innerHTML = `<style>${CSS} ${VariablesCSS}</style>${renderHTML()}`;
+    shadowRoot.appendChild(template.content.cloneNode(true));
+
+    return {
+      root: shadowRoot.querySelector<HTMLDivElement>(".jb-range-input-web-component")!,
+      label: shadowRoot.querySelector<HTMLLabelElement>(".label")!,
+      svg: shadowRoot.querySelector<SVGSVGElement>(".range-svg")!,
+      line: shadowRoot.querySelector<SVGLineElement>(".range-line")!,
+      activeLine: shadowRoot.querySelector<SVGLineElement>(".range-active-line")!,
+      ticks: shadowRoot.querySelector<SVGGElement>(".range-ticks")!,
+      handles: shadowRoot.querySelector<SVGGElement>(".range-handles")!,
+      balloon: shadowRoot.querySelector<SVGGElement>(".range-balloon")!,
+      balloonLabel: shadowRoot.querySelector<SVGGElement>(".range-balloon-label")!,
+      balloonValue: shadowRoot.querySelector<SVGTextElement>(".range-balloon-value")!,
+      tickHeightProbe: shadowRoot.querySelector<HTMLSpanElement>(".tick-height-probe")!,
+      minorTickHeightProbe: shadowRoot.querySelector<HTMLSpanElement>(".minor-tick-height-probe")!,
+      tickLabels: shadowRoot.querySelector<HTMLDivElement>(".tick-labels")!,
+      handleSizeProbe: shadowRoot.querySelector<HTMLSpanElement>(".handle-size-probe")!,
+      messageBox: shadowRoot.querySelector<HTMLDivElement>(".message-box")!,
+    };
   }
 
   #registerEventListeners(): void {
     this.#eventAbortController?.abort();
     this.#eventAbortController = new AbortController();
     const { signal } = this.#eventAbortController;
-    registerRangeInteractions(
-      this.#elements,
-      {
-        getMin: () => this.#min,
-        getMax: () => this.#max,
-        getStep: () => this.#step,
-        getDisabled: () => this.#disabled,
-        getBalloonRotationDisabled: () => this.#disableBalloonRotation,
-        onInput: (handleIndex, value) => this.#updateValueFromHandle(handleIndex, value),
-        onChange: () => {
-          this.dispatchEvent(new Event("change", { bubbles: true, composed: true }));
-          if (!this.isAutoValidationDisabled) this.#validation.checkValidity({ showError: true });
-        },
-        onCancel: () => this.#render(this.getBoundingClientRect().width),
+    const interactionController = new RangeInteractionController(this.#elements, {
+      getMin: () => this.#min,
+      getMax: () => this.#max,
+      getStep: () => this.#step,
+      getDisabled: () => this.#disabled,
+      getBalloonRotationDisabled: () => this.#disableBalloonRotation,
+      onInput: (handleIndex, value) => this.#updateValueFromHandle(handleIndex, value),
+      onChange: () => {
+        this.dispatchEvent(new Event("change", { bubbles: true, composed: true }));
+        if (!this.isAutoValidationDisabled) this.#validation.checkValidity({ showError: true });
       },
-      signal,
-    );
+      onCancel: () => this.#render(this.getBoundingClientRect().width),
+    });
+    interactionController.register(signal);
     this.#elements.label.addEventListener("click", () => this.#focusFirstHandle(), { signal });
     this.addEventListener(
       "invalid",
