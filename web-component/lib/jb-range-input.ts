@@ -3,7 +3,7 @@ import { RangeInteractionController } from "./interaction-controller.js";
 import type { RangeElements } from "./utils.js";
 import CSS from "./jb-range-input.css";
 import VariablesCSS from "./variables.css";
-import { parseNumberAttribute } from "jb-core";
+import { enToFaDigits, parseBooleanAttribute, parseNumberAttribute } from "jb-core";
 import { getRequiredMessage, i18n } from "jb-core/i18n";
 import { registerDefaultVariables } from "jb-core/theme";
 import type { JBFormInputStandards } from "jb-form";
@@ -22,6 +22,7 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
       "tick-step",
       "minor-tick-step",
       "show-tick-labels",
+      "show-persian-number",
       "disable-balloon-rotation",
       "mode",
       "value",
@@ -39,6 +40,9 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
   #tickStep = 1;
   #minorTickStep: number | null = null;
   #showTickLabels = false;
+  #showPersianNumber = i18n.locale.numberingSystem === "arabext";
+  #hasShowPersianNumberOverride = false;
+  #unsubscribeLocaleChange: VoidFunction | null = null;
   #disableBalloonRotation = false;
   #tickLabelFormatter: (value: number) => string = value => String(value);
   #mode: RangeInputMode = "single";
@@ -208,6 +212,25 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
     this.#render(this.getBoundingClientRect().width);
   }
 
+  get showPersianNumber(): boolean {
+    return this.#showPersianNumber;
+  }
+
+  set showPersianNumber(value: boolean) {
+    this.#hasShowPersianNumberOverride = true;
+    this.#setShowPersianNumber(Boolean(value));
+  }
+
+  #setShowPersianNumber(value: boolean): void {
+    this.#showPersianNumber = value;
+    this.#render(this.getBoundingClientRect().width);
+  }
+
+  #formatValue(value: number | string): string {
+    const stringValue = String(value);
+    return this.#showPersianNumber ? enToFaDigits(stringValue) : stringValue;
+  }
+
   get disableBalloonRotation(): boolean {
     return this.#disableBalloonRotation;
   }
@@ -313,6 +336,7 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
       getStep: () => this.#step,
       getDisabled: () => this.#disabled,
       getBalloonRotationDisabled: () => this.#disableBalloonRotation,
+      formatValue: value => this.#formatValue(value),
       onInput: (handleIndex, value) => this.#updateValueFromHandle(handleIndex, value),
       onChange: () => {
         this.dispatchEvent(new Event("change", { bubbles: true, composed: true }));
@@ -341,16 +365,20 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
       this.#step = normalizeStep(parseNumberAttribute(this.getAttribute("step"), 1));
       this.#tickStep = normalizeStep(parseNumberAttribute(this.getAttribute("tick-step"), 1));
       this.#minorTickStep = this.hasAttribute("minor-tick-step") ? normalizeStep(parseNumberAttribute(this.getAttribute("minor-tick-step"), 1)) : null;
-      this.#showTickLabels = this.hasAttribute("show-tick-labels");
-      this.#disableBalloonRotation = this.hasAttribute("disable-balloon-rotation");
+      this.#showTickLabels = parseBooleanAttribute(this.getAttribute("show-tick-labels"));
+      if (this.hasAttribute("show-persian-number")) {
+        this.#hasShowPersianNumberOverride = true;
+        this.#showPersianNumber = parseBooleanAttribute(this.getAttribute("show-persian-number"), i18n.locale.numberingSystem === "arabext");
+      }
+      this.#disableBalloonRotation = parseBooleanAttribute(this.getAttribute("disable-balloon-rotation"));
       this.#mode = this.getAttribute("mode") === "range" ? "range" : "single";
       this.#hasValue = this.hasAttribute("value");
       this.#value = this.#parseValueAttribute(this.getAttribute("value"));
       this.#hasStartPoint = this.hasAttribute("start-point");
       this.#startPoint = this.#parseStartPointAttribute(this.getAttribute("start-point"));
       if (!this.#isDirty) this.#initialValue = this.#cloneValue(this.#value);
-      this.disabled = this.hasAttribute("disabled");
-      this.required = this.hasAttribute("required");
+      this.disabled = parseBooleanAttribute(this.getAttribute("disabled"));
+      this.required = parseBooleanAttribute(this.getAttribute("required"));
       this.#setLabel(this.label);
       this.#setMessage(this.message, false);
     }
@@ -358,6 +386,11 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
     this.#resizeObserver.observe(this.#elements.tickHeightProbe);
     this.#resizeObserver.observe(this.#elements.minorTickHeightProbe);
     this.#resizeObserver.observe(this.#elements.handleSizeProbe);
+    this.#unsubscribeLocaleChange?.();
+    if (!this.#hasShowPersianNumberOverride) this.#setShowPersianNumber(i18n.locale.numberingSystem === "arabext");
+    this.#unsubscribeLocaleChange = i18n.subscribe(() => {
+      if (!this.#hasShowPersianNumberOverride) this.#setShowPersianNumber(i18n.locale.numberingSystem === "arabext");
+    });
     this.#render(this.getBoundingClientRect().width);
     this.#setFormValue();
   }
@@ -365,6 +398,8 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
   disconnectedCallback(): void {
     this.#eventAbortController?.abort();
     this.#eventAbortController = null;
+    this.#unsubscribeLocaleChange?.();
+    this.#unsubscribeLocaleChange = null;
     this.#resizeObserver.disconnect();
   }
 
@@ -388,10 +423,14 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
       this.#minorTickStep = newValue === null ? null : normalizeStep(parseNumberAttribute(newValue, 1));
     }
     if (name === "show-tick-labels") {
-      this.#showTickLabels = newValue !== null;
+      this.#showTickLabels = parseBooleanAttribute(newValue);
+    }
+    if (name === "show-persian-number") {
+      this.#hasShowPersianNumberOverride = newValue !== null;
+      this.#setShowPersianNumber(parseBooleanAttribute(newValue, i18n.locale.numberingSystem === "arabext"));
     }
     if (name === "disable-balloon-rotation") {
-      this.#disableBalloonRotation = newValue !== null;
+      this.#disableBalloonRotation = parseBooleanAttribute(newValue);
     }
     if (name === "mode") {
       if (!this.#isReflectingMode) {
@@ -413,10 +452,10 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
       this.#startPoint = this.#parseStartPointAttribute(newValue);
     }
     if (name === "disabled") {
-      this.disabled = newValue !== null;
+      this.disabled = parseBooleanAttribute(newValue);
     }
     if (name === "required") {
-      this.required = newValue !== null;
+      this.required = parseBooleanAttribute(newValue);
     }
     if (name === "label") {
       this.#setLabel(newValue ?? "");
@@ -538,7 +577,8 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
       this.tickStep,
       this.minorTickStep,
       this.showTickLabels,
-      this.tickLabelFormatter,
+      value => this.#formatValue(this.tickLabelFormatter(value)),
+      value => this.#formatValue(value),
       this.#value,
       this.#startPoint,
       width,

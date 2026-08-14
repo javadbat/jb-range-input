@@ -11,6 +11,7 @@ export type RangeInteractionOptions = {
   getStep: () => number;
   getDisabled: () => boolean;
   getBalloonRotationDisabled: () => boolean;
+  formatValue: (value: number) => string;
   onInput: (handleIndex: number, value: number) => number;
   onChange: () => void;
   onCancel: () => void;
@@ -117,7 +118,7 @@ export class RangeInteractionController {
     handle.setAttribute("cx", String(position.x));
     handle.setAttribute("data-value", String(position.value));
     handle.setAttribute("aria-valuenow", String(position.value));
-    handle.setAttribute("aria-valuetext", String(position.value));
+    handle.setAttribute("aria-valuetext", this.options.formatValue(position.value));
     updateActiveLine(this.elements, Number(this.elements.line.getAttribute("x1")));
     this.#showBalloon(handleIndex, position.value);
     return position.value;
@@ -188,7 +189,7 @@ export class RangeInteractionController {
     const transform = `translate(${handle.getAttribute("cx") ?? 0} ${handle.getAttribute("cy") ?? 0})`;
     this.elements.balloon.setAttribute("transform", transform);
     this.elements.balloonLabel.setAttribute("transform", transform);
-    this.elements.balloonValue.textContent = String(value);
+    this.elements.balloonValue.textContent = this.options.formatValue(value);
     this.elements.balloon.classList.toggle("--hover", isHover);
     this.elements.balloonLabel.classList.toggle("--hover", isHover);
     this.elements.balloon.classList.add("--show");

@@ -57,6 +57,7 @@ export function renderRange(
   minorTickStep: number | null,
   showTickLabels: boolean,
   tickLabelFormatter: (value: number) => string,
+  valueFormatter: (value: number) => string,
   value: RangeInputValue,
   startPoint: number,
   width: number,
@@ -74,9 +75,10 @@ export function renderRange(
     minorTickStep,
     showTickLabels,
     tickLabelFormatter,
+    valueFormatter,
     layout,
   });
-  renderHandles(elements, value, min, max, step, layout);
+  renderHandles(elements, value, min, max, step, valueFormatter, layout);
   updateActiveLine(elements, layout, min, max, startPoint);
 }
 
@@ -87,6 +89,7 @@ type TickRenderOptions = {
   minorTickStep: number | null;
   showTickLabels: boolean;
   tickLabelFormatter: (value: number) => string;
+  valueFormatter: (value: number) => string;
   layout: RangeLayout;
 };
 
@@ -108,16 +111,24 @@ function clearScale(elements: RangeElements): void {
 }
 
 function renderTicks(elements: RangeElements, options: TickRenderOptions): void {
-  const { min, max, tickStep, minorTickStep, showTickLabels, tickLabelFormatter, layout } = options;
+  const { min, max, tickStep, minorTickStep, showTickLabels, tickLabelFormatter, valueFormatter, layout } = options;
   const normalizedTickStep = normalizeStep(tickStep);
   const tickFragment = document.createDocumentFragment();
-  renderMinorTicks(tickFragment, min, max, normalizedTickStep, minorTickStep, layout);
-  const labelFragment = renderMajorTicks(tickFragment, min, max, normalizedTickStep, showTickLabels, tickLabelFormatter, layout);
+  renderMinorTicks(tickFragment, min, max, normalizedTickStep, minorTickStep, valueFormatter, layout);
+  const labelFragment = renderMajorTicks(tickFragment, min, max, normalizedTickStep, showTickLabels, tickLabelFormatter, valueFormatter, layout);
   elements.ticks.appendChild(tickFragment);
   elements.tickLabels.appendChild(labelFragment);
 }
 
-function renderMinorTicks(fragment: DocumentFragment, min: number, max: number, majorTickStep: number, minorTickStep: number | null, layout: RangeLayout): void {
+function renderMinorTicks(
+  fragment: DocumentFragment,
+  min: number,
+  max: number,
+  majorTickStep: number,
+  minorTickStep: number | null,
+  valueFormatter: (value: number) => string,
+  layout: RangeLayout,
+): void {
   if (minorTickStep === null) return;
   const normalizedMinorTickStep = normalizeStep(minorTickStep);
   const tickCount = getTickCount(min, max, normalizedMinorTickStep);
@@ -125,7 +136,7 @@ function renderMinorTicks(fragment: DocumentFragment, min: number, max: number, 
     const tickValue = getTickValue(min, max, normalizedMinorTickStep, index);
     const majorStepIndex = (tickValue - min) / majorTickStep;
     if (Math.abs(majorStepIndex - Math.round(majorStepIndex)) < 1e-10) continue;
-    fragment.appendChild(createTick(tickValue, valueToX(tickValue, min, max, layout), layout.centerY, layout.minorTickHeight, "minor"));
+    fragment.appendChild(createTick(tickValue, valueToX(tickValue, min, max, layout), layout.centerY, layout.minorTickHeight, "minor", valueFormatter));
   }
 }
 
@@ -136,6 +147,7 @@ function renderMajorTicks(
   tickStep: number,
   showTickLabels: boolean,
   tickLabelFormatter: (value: number) => string,
+  valueFormatter: (value: number) => string,
   layout: RangeLayout,
 ): DocumentFragment {
   const labelFragment = document.createDocumentFragment();
@@ -143,7 +155,7 @@ function renderMajorTicks(
   for (let index = 0; index < tickCount; index++) {
     const tickValue = getTickValue(min, max, tickStep, index);
     const x = valueToX(tickValue, min, max, layout);
-    tickFragment.appendChild(createTick(tickValue, x, layout.centerY, layout.tickHeight, "major"));
+    tickFragment.appendChild(createTick(tickValue, x, layout.centerY, layout.tickHeight, "major", valueFormatter));
     if (showTickLabels) {
       labelFragment.appendChild(createTickLabel(tickValue, x, index === 0, Math.abs(tickValue - max) < 1e-10, tickLabelFormatter));
     }
@@ -163,7 +175,15 @@ function createTickLabel(value: number, x: number, isStart: boolean, isEnd: bool
   return label;
 }
 
-function renderHandles(elements: RangeElements, value: RangeInputValue, min: number, max: number, step: number, layout: RangeLayout): void {
+function renderHandles(
+  elements: RangeElements,
+  value: RangeInputValue,
+  min: number,
+  max: number,
+  step: number,
+  valueFormatter: (value: number) => string,
+  layout: RangeLayout,
+): void {
   const values = Array.isArray(value) ? value : [value];
   ensureHandleCount(elements.handles, values.length);
   values.forEach((handleValue, handleIndex) => {
@@ -177,7 +197,7 @@ function renderHandles(elements: RangeElements, value: RangeInputValue, min: num
     handle.setAttribute("aria-valuemin", String(min));
     handle.setAttribute("aria-valuemax", String(max));
     handle.setAttribute("aria-valuenow", String(handleValue));
-    handle.setAttribute("aria-valuetext", String(handleValue));
+    handle.setAttribute("aria-valuetext", valueFormatter(handleValue));
     handle.setAttribute("data-step", String(step));
   });
 }
@@ -195,7 +215,7 @@ function ensureHandleCount(handles: SVGGElement, count: number): void {
   }
 }
 
-function createTick(value: number, x: number, centerY: number, height: number, level: "major" | "minor"): SVGLineElement {
+function createTick(value: number, x: number, centerY: number, height: number, level: "major" | "minor", valueFormatter: (value: number) => string): SVGLineElement {
   const tick = document.createElementNS(SVG_NAMESPACE, "line");
   tick.classList.add("range-tick", `range-${level}-tick`);
   tick.setAttribute("part", `range-tick range-${level}-tick`);
@@ -204,9 +224,9 @@ function createTick(value: number, x: number, centerY: number, height: number, l
   tick.setAttribute("y1", String(centerY - height / 2));
   tick.setAttribute("y2", String(centerY + height / 2));
   tick.setAttribute("data-value", String(value));
-  tick.setAttribute("aria-label", String(value));
+  tick.setAttribute("aria-label", valueFormatter(value));
   const title = document.createElementNS(SVG_NAMESPACE, "title");
-  title.textContent = String(value);
+  title.textContent = valueFormatter(value);
   tick.appendChild(title);
   return tick;
 }

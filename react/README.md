@@ -30,6 +30,7 @@ import { JBRangeInput } from "jb-range-input/react";
 | `tickStep` | `number` | `1` | Interval between visible tick marks; it does not constrain selection. |
 | `minorTickStep` | `number \| null` | `null` | Interval between optional unlabeled minor ticks. |
 | `showTickLabels` | `boolean` | `false` | Displays labels below major ticks. |
+| `showPersianNumber` | `boolean` | locale based | Displays Persian digits while keeping values numeric. |
 | `disableBalloonRotation` | `boolean` | `false` | Disables velocity-based balloon rotation while dragging. |
 | `size` | `"xs" \| "sm" \| "md" \| "lg" \| "xl"` | `"md"` | Visual size variant. |
 | `tickLabelFormatter` | `(value: number) => string` | string conversion | Formats major-tick labels. |

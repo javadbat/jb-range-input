@@ -31,6 +31,7 @@ const meta = {
     startPoint: { control: "number" },
     minorTickStep: { control: "number" },
     showTickLabels: { control: "boolean" },
+    showPersianNumber: { control: "boolean" },
     disableBalloonRotation: { control: "boolean" },
     size: { control: "inline-radio", options: ["xs", "sm", "md", "lg", "xl"] },
     mode: { control: "inline-radio", options: ["single", "range"] },
@@ -131,6 +132,25 @@ export const WithTickLabels: Story = {
     tickStep: 25,
     showTickLabels: true,
     value: 50,
+  },
+};
+
+export const PersianNumber: Story = {
+  args: {
+    max: 10,
+    tickStep: 5,
+    showTickLabels: true,
+    showPersianNumber: true,
+    value: 5,
+  },
+  play: async ({ canvasElement }) => {
+    const rangeInput = canvasElement.querySelector<JBRangeInputWebComponent>("jb-range-input")!;
+    const tickLabels = rangeInput.shadowRoot!.querySelectorAll<HTMLElement>("[part='tick-label']");
+    const handle = rangeInput.shadowRoot!.querySelector<SVGCircleElement>("[part~='range-handle']")!;
+
+    await waitFor(() => expect([...tickLabels].map(label => label.textContent)).toEqual(["۰", "۵", "۱۰"]));
+    expect(handle.getAttribute("aria-valuetext")).toBe("۵");
+    expect(rangeInput.value).toBe(5);
   },
 };
 

@@ -6,9 +6,10 @@ export const webComponentList: WebComponentBuildConfig[] = [
     path: "./web-component/lib/jb-range-input.ts",
     outputPath: "./web-component/dist/jb-range-input.js",
     tsConfigPath: "./web-component/tsconfig.json",
-    external: ["jb-core", "jb-form", "jb-validation"],
+    external: ["jb-core", "jb-core/i18n", "jb-form", "jb-validation"],
     globals: {
       "jb-core": "JBCore",
+      "jb-core/i18n": "JBCoreI18N",
       "jb-form": "JBForm",
       "jb-validation": "JBValidation",
     },

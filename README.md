@@ -75,6 +75,7 @@ The [attribute controls](https://javadbat.github.io/design-system/?path=/story/c
 | `tick-step` | `number` | `1` | Interval between visible tick marks. It does not constrain selection. |
 | `minor-tick-step` | `number` | none | Interval between optional minor ticks. Minor ticks never receive labels. |
 | `show-tick-labels` | `boolean` | `false` | Displays labels below major ticks. |
+| `show-persian-number` | `boolean` | locale based | Displays Persian digits in tick labels, slider accessibility text, and the value balloon while keeping `.value` numeric. |
 | `disable-balloon-rotation` | `boolean` | `false` | Disables velocity-based balloon rotation while dragging. |
 | `size` | `"xs" \| "sm" \| "md" \| "lg" \| "xl"` | `"md"` | Visual size variant. |
 | `name` | `string` | `""` | Field name used during form submission. |
@@ -100,6 +101,7 @@ The [controlled range example](https://javadbat.github.io/design-system/?path=/s
 | `tickStep` | `number` | no | Visible tick interval. Non-positive or invalid values normalize to `1`. |
 | `minorTickStep` | `number \| null` | no | Minor-tick interval, or `null` to hide minor ticks. |
 | `showTickLabels` | `boolean` | no | Displays labels below major ticks. |
+| `showPersianNumber` | `boolean` | no | Overrides locale-based Persian digit display without changing numeric values. |
 | `disableBalloonRotation` | `boolean` | no | Disables velocity-based balloon rotation while dragging. |
 | `tickLabelFormatter` | `(value: number) => string` | no | Formats major-tick labels. Functions are configured through JavaScript, not attributes. |
 | `name` | `string` | no | Associated form field name. |
