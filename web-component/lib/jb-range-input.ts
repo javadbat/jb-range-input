@@ -1,9 +1,9 @@
+import { defineWebComponent, JBBaseComponent, enToFaDigits, parseBooleanAttribute, parseNumberAttribute } from "jb-core";
 import { renderHTML, renderRange } from "./render.js";
 import { RangeInteractionController } from "./interaction-controller.js";
 import type { RangeElements } from "./utils.js";
 import CSS from "./jb-range-input.css";
 import VariablesCSS from "./variables.css";
-import { enToFaDigits, parseBooleanAttribute, parseNumberAttribute } from "jb-core";
 import { getRequiredMessage, i18n } from "jb-core/i18n";
 import { registerDefaultVariables } from "jb-core/theme";
 import type { JBFormInputStandards } from "jb-form";
@@ -11,7 +11,7 @@ import { ValidationHelper, type ValidationItem, type ValidationResult, type With
 import type { RangeInputMode, RangeInputValue } from "./types.js";
 import { normalizeStep, snapValueToStep } from "./math.js";
 export * from "./types.js";
-export class JBRangeInputWebComponent extends HTMLElement implements WithValidation<RangeInputValue>, JBFormInputStandards<RangeInputValue> {
+export class JBRangeInputWebComponent extends JBBaseComponent implements WithValidation<RangeInputValue>, JBFormInputStandards<RangeInputValue> {
   static formAssociated = true;
   static get observedAttributes(): string[] {
     return [
@@ -685,6 +685,4 @@ export class JBRangeInputWebComponent extends HTMLElement implements WithValidat
   }
 }
 
-if (!customElements.get("jb-range-input")) {
-  customElements.define("jb-range-input", JBRangeInputWebComponent);
-}
+defineWebComponent("jb-range-input", JBRangeInputWebComponent);
