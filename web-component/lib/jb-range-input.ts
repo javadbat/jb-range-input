@@ -686,3 +686,9 @@ export class JBRangeInputWebComponent extends JBBaseComponent implements WithVal
 }
 
 defineWebComponent("jb-range-input", JBRangeInputWebComponent);
+
+declare global {
+  interface HTMLElementTagNameMap {
+    "jb-range-input": JBRangeInputWebComponent;
+  }
+}
