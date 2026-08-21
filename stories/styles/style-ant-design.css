@@ -8,6 +8,7 @@ jb-range-input.ant-design-style {
   --jb-range-input-line-width: 4;
   --jb-range-input-active-line-width: 4;
   --jb-range-input-handle-size: 0.625rem;
+  --jb-range-input-balloon-hover-offset: 0.5rem;
   --jb-range-input-line-dash-array: 1 0;
 }
 

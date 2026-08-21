@@ -9,6 +9,7 @@ jb-range-input.forest-style {
   --jb-range-input-line-width: 5;
   --jb-range-input-active-line-width: 7;
   --jb-range-input-handle-size: 0.75rem;
+  --jb-range-input-balloon-hover-offset: 0.625rem;
   --jb-range-input-line-dash-array: 1 0;
 }
 

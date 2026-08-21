@@ -9,6 +9,7 @@ jb-range-input.cupertino-style {
   --jb-range-input-line-width: 8;
   --jb-range-input-active-line-width: 8;
   --jb-range-input-handle-size: 0.875rem;
+  --jb-range-input-balloon-hover-offset: 0.75rem;
   --jb-range-input-line-dash-array: 1 0;
 }
 
