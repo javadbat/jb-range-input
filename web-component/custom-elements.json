@@ -65,6 +65,7 @@
             { "kind": "field", "name": "validationMessage", "type": { "text": "string" }, "readonly": true, "description": "Current ElementInternals validation message." }
           ],
           "methods": [
+            { "name": "reset", "description": "Restores initialValue and clears displayed validation." },
             { "name": "checkValidity", "description": "Runs validation without showing an error and dispatches invalid on failure.", "return": { "type": { "text": "boolean" } } },
             {
               "name": "reportValidity",

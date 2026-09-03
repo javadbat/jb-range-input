@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.0] - 2026-09-03
+
+### Added
+
+- Added the standard public `reset()` method; native form reset delegates to the same behavior.
+
+### Changed
+
+- Standardized private empty-value and form synchronization helpers as `#clearValue()` and `#updateFormValue()`.
+
 ## [0.6.0] - 2026-09-02
 
 ### Changed

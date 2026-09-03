@@ -263,7 +263,7 @@ export class JBRangeInputWebComponent extends JBBaseComponent implements WithVal
       this.#isReflectingMode = false;
     }
     if (this.#hasValue || this.#hasConnected) this.#reflectValueAttribute();
-    this.#setFormValue();
+    this.#updateFormValue();
     this.#render(this.getBoundingClientRect().width);
   }
 
@@ -392,7 +392,7 @@ export class JBRangeInputWebComponent extends JBBaseComponent implements WithVal
       if (!this.#hasShowPersianNumberOverride) this.#setShowPersianNumber(i18n.locale.numberingSystem === "arabext");
     });
     this.#render(this.getBoundingClientRect().width);
-    this.#setFormValue();
+    this.#updateFormValue();
   }
 
   disconnectedCallback(): void {
@@ -438,14 +438,15 @@ export class JBRangeInputWebComponent extends JBBaseComponent implements WithVal
         this.#value = this.#parseValueAttribute(this.getAttribute("value"));
         if (!this.#isDirty) this.#initialValue = this.#cloneValue(this.#value);
         this.#reflectValueAttribute();
-        this.#setFormValue();
+        this.#updateFormValue();
       }
     }
     if (name === "value") {
       if (!this.#isReflectingValue) this.#hasValue = newValue !== null;
-      this.#value = this.#parseValueAttribute(newValue);
+      if (newValue === null) this.#clearValue();
+      else this.#value = this.#parseValueAttribute(newValue);
       if (!this.#isDirty) this.#initialValue = this.#cloneValue(this.#value);
-      this.#setFormValue();
+      if (newValue !== null) this.#updateFormValue();
     }
     if (name === "start-point") {
       this.#hasStartPoint = newValue !== null;
@@ -470,7 +471,7 @@ export class JBRangeInputWebComponent extends JBBaseComponent implements WithVal
       this.#value = this.#normalizeValue(this.#value);
       this.#startPoint = this.#hasStartPoint ? this.#normalizeStartPoint(this.#startPoint) : this.#getSingleDefaultValue();
       this.#reflectValueAttribute();
-      this.#setFormValue();
+      this.#updateFormValue();
     }
     this.#render(this.getBoundingClientRect().width);
   }
@@ -541,7 +542,7 @@ export class JBRangeInputWebComponent extends JBBaseComponent implements WithVal
   #setValue(value: RangeInputValue): void {
     this.#value = this.#normalizeValue(value);
     this.#reflectValueAttribute();
-    this.#setFormValue();
+    this.#updateFormValue();
     this.#render(this.getBoundingClientRect().width);
   }
 
@@ -549,9 +550,15 @@ export class JBRangeInputWebComponent extends JBBaseComponent implements WithVal
     return Array.isArray(value) ? ([...value] as [number, number]) : value;
   }
 
-  #setFormValue(): void {
+  #updateFormValue(): void {
     const value = Array.isArray(this.#value) ? this.#value.join(",") : String(this.#value);
     this.#internals?.setFormValue(value);
+  }
+
+  #clearValue(): void {
+    this.#hasValue = false;
+    this.#value = this.#parseValueAttribute(null);
+    this.#updateFormValue();
   }
 
   #updateValueFromHandle(handleIndex: number, value: number): number {
@@ -599,11 +606,15 @@ export class JBRangeInputWebComponent extends JBBaseComponent implements WithVal
     (this.#elements.handles.firstElementChild as SVGCircleElement | null)?.focus();
   }
 
-  formResetCallback(): void {
+  reset(): void {
     this.#isDirty = false;
     this.#setValue(this.#initialValue);
     this.#validation.reset();
     this.#internals?.setValidity({});
+  }
+
+  formResetCallback(): void {
+    this.reset();
   }
 
   formDisabledCallback(disabled: boolean): void {
@@ -670,6 +681,9 @@ export class JBRangeInputWebComponent extends JBBaseComponent implements WithVal
 
   get validationMessage(): string {
     return this.#internals?.validationMessage ?? "";
+  }
+  get validity() {
+    return this.#internals?.validity;
   }
 
   checkValidity(): boolean {

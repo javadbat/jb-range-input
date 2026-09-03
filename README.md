@@ -121,6 +121,7 @@ The [validation example](https://javadbat.github.io/design-system/?path=/story/c
 | --- | --- | --- |
 | `checkValidity()` | `boolean` | Runs validation without showing the error and dispatches `invalid` when invalid. |
 | `reportValidity()` | `boolean` | Runs validation, shows the invalid state, and dispatches `invalid` when invalid. |
+| `reset()` | `void` | Restores `initialValue` and clears displayed validation. |
 | `clearValidationError()` | `void` | Clears the visible invalid state. |
 
 ### Events
