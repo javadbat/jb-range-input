@@ -1,6 +1,6 @@
 {
   "name": "jb-range-input",
-  "version": "1.0.0",
+  "version": "0.7.0",
   "description": "Range input web component",
   "type": "module",
   "author": {
@@ -44,8 +44,8 @@
     "url": "https://github.com/javadbat/jb-range-input.git"
   },
   "dependencies": {
-    "jb-core": "^0.36.0",
-    "jb-form": "0.13.0",
+    "jb-core": "^0.37.0",
+    "jb-form": "0.14.0",
     "jb-validation": "^1.0.0"
   }
 }
